@@ -21,3 +21,12 @@ En esta segunda versión se incluirá información sobre los vuelos que llegan a
 - Mostrar las trayectorias de los vuelos de más de 2000km en Google Earth
 
 Link a la demo de la V2: https://youtu.be/EJtJWdHMbDo
+
+# Versión 3
+En esta tercera versión se incluirá nuevas funcionalidades para la gestión de puertas de embarque en el aeropuerto del Prat de Barcelona (LEBL). Para ello, se creará un fichero llamado LEBL.py, en el que se incluiran diferentes funciones. Entre ellas estan la configuración de puertas de embarque, que nos permite crear puertas de mediante rangos numéricos, asignarles una nomenclatura con prefijos y asegura un estado inicial limpio (todas las puertas libres), además de cargar datos desde archivos para actualizar la lista de aerolíneas de la terminal y completar la estructura de las puertas de embarque en el aeropuerto. También se mostrará el estado de ocupación de cada puerta, un sistema de búsqueda rápida para identificar en qué terminal opera cada compañía y una asignación de puertas según la ocupación.
+Además, al igual que en la versión anterior, al final se incluirá una sección de test, con la que se comprobará que todo funcione correctamente. Finalmente, se incluiran estas funciones a interface.py. De esta manera, en la interfaz gráfica podremos ver:
+- Crear la estructura de datos del aeropuerto LEBL
+- Asignar puertas de embarque a los vuelos de llegada
+- Visualizar la ocupación de las puertas de embarque (idealmente en forma de gráfico con la estructura del aeropuerto)
+
+Link a la demo de la V3:
