@@ -1,5 +1,31 @@
 from airport import IsSchengenAirport
 
+"""
+   Módulo de gestión de vuelos y llegadas de aeronaves.
+   Funciones principales:
+    1. Cargar vuelos desde un archivo.
+    2. Mostrar estadísticas de llegadas.
+    3. Guardar vuelos en archivos.
+    4. Generar gráficas con matplotlib.
+    5. Crear mapas KML para Google Earth.
+    6. Calcular distancias mediante la fórmula de Haversine.
+    7. Filtrar vuelos de larga distancia.
+"""
+
+"""
+    Clase que representa una aeronave.
+    Atributos:
+        aircraft_id : str
+             Identificador o matrícula de la aeronave.
+        airline_company : str
+             Código ICAO de la aerolínea.
+        origin_airport : str
+             Código ICAO del aeropuerto de origen.
+        landing_time : str
+             Hora de llegada en formato hh:mm.
+    Resultado:
+        Crea un objeto Aircraft con todos sus atributos.
+"""
 class Aircraft:
     def __init__(self, aircraft_id, airline_company, origin_airport, landing_time):
         self.aircraft_id = aircraft_id
@@ -7,6 +33,16 @@ class Aircraft:
         self.landing_time = landing_time
         self.airline_company = airline_company
 
+"""
+    Carga vuelos desde un archivo de texto.
+    Parámetros:
+         filename (str): Nombre del archivo de entrada.
+    Formato del archivo:
+         AIRCRAFT ORIGIN ARRIVAL AIRLINE
+         AEA123 LEBL 10:30 IBE
+    Resultado:
+         list: Lista de objetos Aircraft. Devuelve [] si el archivo no existe.
+"""
 def LoadArrivals(filename):
     aircrafts = [] # Abre el archivo y devuelve una lista de Aircraft
     try:
@@ -34,6 +70,13 @@ def LoadArrivals(filename):
 
 import matplotlib.pyplot as plt
 
+"""
+    Genera una gráfica de llegadas por hora.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra un gráfico de barras con el número de aterrizajes por hora.
+"""
 def PlotArrivals(aircrafts):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -65,6 +108,16 @@ def PlotArrivals(aircrafts):
     plt.legend()
     plt.show()
 
+"""
+    Guarda vuelos en un archivo de texto.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        filename (str): Nombre del archivo de salida.
+    Formato:
+        Campos vacíos se sustituyen por "-" o "0".
+    Resultado:
+        Genera un archivo con los vuelos. Devuelve un mensaje de error si ocurre un problema.
+"""
 def SaveFlights(aircrafts, filename):
     if not aircrafts:
         return "Error: Empty list" # Código de error
@@ -102,6 +155,13 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
+"""
+    Genera una gráfica de vuelos por aerolínea.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra un gráfico de barras con la cantidad de vuelos por aerolínea.
+"""
 def PlotAirlines(aircrafts):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -135,6 +195,13 @@ def PlotAirlines(aircrafts):
     plt.legend()
     plt.show()
 
+"""
+    Genera una gráfica comparando vuelos Schengen y no Schengen.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra una gráfica de barras apiladas.
+    """
 def PlotFlightsType(aircrafts):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -167,6 +234,15 @@ def PlotFlightsType(aircrafts):
     plt.legend()
     plt.show()
 
+"""
+    Genera un archivo KML con trayectorias de vuelo.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        airports_dict (dict): Diccionario con aeropuertos y coordenadas.
+        filename (str): Nombre del archivo KML de salida.
+    Resultado:
+        Crea un archivo KML compatible con Google Earth.
+    """
 def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
     lebl_lat, lebl_lon = 41.297, 2.083 # Definimos las coordenadas del aeropuerto LEBL
     # Genera un archivo KML para ver las rutas aéreas en Google Earth
@@ -214,6 +290,14 @@ def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
 
 import math
 
+"""
+    Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine.
+    Parámetros:
+        lat1, lon1: Coordenadas del punto 1 (grados).
+        lat2, lon2: Coordenadas del punto 2 (grados).
+    Resultado:
+        float: Distancia en kilómetros entre ambos puntos.
+    """
 def CalculateHaversine(lat1, lon1, lat2, lon2):
     # Calcula la distancia de círculo máximo entre dos puntos
     # Basado en el Anexo 2: Haversine Formula
@@ -233,6 +317,14 @@ def CalculateHaversine(lat1, lon1, lat2, lon2):
 
     return r * c
 
+"""
+    Filtra vuelos de larga distancia.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        airports_dict (dict): Diccionario con información de aeropuertos.
+    Resultado:
+        list: Lista de vuelos cuya distancia a Barcelona supera los 2000 km.
+"""
 def LongDistanceArrivals(aircrafts, airports_dict):
     # Coordenadas de destino: Barcelona (LEBL)
     lebl_lat, lebl_lon = 41.297, 2.083
@@ -250,6 +342,17 @@ def LongDistanceArrivals(aircrafts, airports_dict):
     return long_distance_list
 
 # ---------------- TEST SECTION ---------------- #
+
+"""
+   Bloque principal de pruebas.
+   Funciones comprobadas:
+    1. Carga de vuelos.
+    2. Generación de gráficas.
+    3. Guardado de archivos.
+    4. Clasificación Schengen.
+    5. Filtrado de larga distancia.
+    6. Generación de mapas KML.
+"""
 
 if __name__ == "__main__":
     # 1. Cargamos los datos del archivo
