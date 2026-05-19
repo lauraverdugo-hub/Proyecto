@@ -1,3 +1,30 @@
+"""
+=====================================================================
+AIRPORT OPERATIONS SUITE — INTERFAZ GRÁFICA PRINCIPAL
+=====================================================================
+   Descripción:
+        Sistema gráfico desarrollado con Tkinter para la gestión visual de:
+             V1 -> Aeropuertos
+             V2 -> Tráfico aéreo
+             V3 -> Gestión de puertas y terminales (LEBL)
+   El programa permite:
+        - Cargar aeropuertos desde archivos.
+        - Gestionar vuelos entrantes.
+        - Visualizar gráficos estadísticos.
+        - Asignar puertas automáticamente.
+        - Exportar rutas KML para Google Earth.
+        - Mostrar información en tiempo real.
+   Tecnologías utilizadas:
+        - Tkinter
+        - Matplotlib
+        - Python estándar
+        - Integración con módulos propios:
+              airport.py
+              aircraft.py
+              LEBL.py
+   Resultado:
+         Interfaz gráfica interactiva de gestión aeroportuaria.
+"""
 import tkinter as tk
 from tkinter import messagebox, filedialog, scrolledtext
 import os
@@ -28,29 +55,61 @@ current_bcn = None
 # LÓGICA DE CONTROL DE LA INTERFAZ
 # =====================================================================
 
+"""
+    Muestra mensajes informativos en la consola integrada.
+    Parámetros:
+        message (str): Texto que se mostrará en el historial.
+    Resultado:
+        Inserta el mensaje en el widget ScrolledText.
+"""
 def log_info(message):
     info_text.config(state='normal')
     info_text.insert(tk.END, f"> {message}\n")
     info_text.config(state='disabled')
     info_text.see(tk.END)
 
+"""
+    Actualiza la lista visual de aeropuertos.
+    Resultado:
+         Refresca el contenido del Listbox principal mostrando: ICAO | Latitud | Longitud | Tipo Schengen
+"""
 def update_list():
     listbox.delete(0, tk.END)
     for a in airports:
         listbox.insert(tk.END,
                        f" {a.icao_code}  |  {round(a.latitude, 4)}, {round(a.longitude, 4)}  |  {'Schengen' if a.schengen else 'No Schengen'}")
 
+"""
+    Actualiza la lista visual de vuelos.
+    Resultado:
+         Refresca el Listbox de vuelos mostrando: ID | Origen | Hora | Aerolínea
+"""
 def update_flights_list():
     listbox_vuelos.delete(0, tk.END)
     for f in aircrafts:
         listbox_vuelos.insert(tk.END,
                               f" {f.aircraft_id}  |  {f.origin_airport}  |  {f.landing_time}  |  {f.airline_company}")
 
+"""
+    Limpia los campos del formulario manual de aeropuertos.
+    Resultado:
+        Vacía:
+            - Código ICAO
+            - Latitud
+            - Longitud
+"""
 def clear_entries():
     entry_code.delete(0, tk.END)
     entry_lat.delete(0, tk.END)
     entry_lon.delete(0, tk.END)
 
+"""
+    Selecciona un aeropuerto desde la lista visual.
+    Parámetros:
+        event (tkinter.Event): Evento generado por el Listbox.
+    Resultado:
+        Copia automáticamente los datos del aeropuerto seleccionado en el formulario editable.
+"""
 def select_airport(event):
     selected = listbox.curselection()
     if not selected: return
@@ -63,6 +122,18 @@ def select_airport(event):
     entry_lon.insert(0, a.longitude)
 
 # --- Acciones V1 y V2 --- #
+
+"""
+    Carga un fichero de aeropuertos desde interfaz.
+    Funcionamiento:
+        - Abre selector de archivos.
+        - Carga aeropuertos.
+        - Determina automáticamente si son Schengen.
+    Resultado:
+        Actualiza:
+            - Lista de aeropuertos
+            - Consola informativa
+"""
 def load_airports_ui():
     filename = filedialog.askopenfilename()
     if filename:
@@ -72,6 +143,15 @@ def load_airports_ui():
         update_list()
         log_info(f"Cargados {len(airports)} aeropuertos en el sistema.")
 
+"""
+    Inserta manualmente un aeropuerto.
+    Datos requeridos:
+        - Código ICAO
+        - Latitud
+        - Longitud
+    Resultado:
+        Añade el aeropuerto al sistema y actualiza la interfaz gráfica.
+"""
 def add_airport_ui():
     code, lat, lon = entry_code.get().upper(), entry_lat.get(), entry_lon.get()
     if not code or not lat or not lon:
@@ -87,6 +167,11 @@ def add_airport_ui():
     except ValueError:
         messagebox.showerror("Error", "Latitud y Longitud deben ser valores numéricos.")
 
+"""
+    Elimina el aeropuerto seleccionado.
+    Resultado:
+        Borra el aeropuerto activo del sistema y actualiza la lista visual.
+"""
 def remove_airport_ui():
     selected = listbox.curselection()
     if not selected: return
@@ -94,6 +179,12 @@ def remove_airport_ui():
     update_list()
     log_info("Aeropuerto seleccionado eliminado de los registros.")
 
+"""
+    Carga vuelos desde un archivo externo.
+    Resultado:
+        - Actualiza la lista de vuelos.
+        - Muestra información en consola.
+"""
 def load_arrivals_ui():
     filename = filedialog.askopenfilename()
     if filename:
@@ -103,6 +194,14 @@ def load_arrivals_ui():
             log_info(f"Cargados {len(aircrafts)} registros de vuelos entrantes.")
             update_flights_list()
 
+"""
+    Genera gráficos dinámicos dentro de Tkinter.
+    Parámetros:
+        funcion_plot (function): Función externa que genera el gráfico.
+        datos (list): Datos a representar.
+    Resultado:
+        Inserta el gráfico Matplotlib dentro del panel gráfico de la interfaz.
+"""
 def mostrar_grafico_v2(funcion_plot, datos):
     if not datos:
         messagebox.showerror("Aviso","No existen datos cargados para generar este gráfico.")
@@ -137,6 +236,16 @@ def mostrar_grafico_v2(funcion_plot, datos):
     canvas.get_tk_widget().pack(fill="both",expand=True)
 
 # --- Acciones V3 (Gates) --- #
+
+"""
+    Construye la estructura operativa del aeropuerto.
+    Funcionamiento:
+        - Carga archivo Terminals.txt
+        - Genera terminales y puertas
+        - Actualiza visualización
+    Resultado:
+        Inicializa el sistema V3.
+"""
 def ui_build_airport_structure():
     global current_bcn
     filename = filedialog.askopenfilename(title="Seleccionar Estructura (Terminals.txt)")
@@ -147,6 +256,15 @@ def ui_build_airport_structure():
             ui_refresh_gates_grid()
             ui_draw_v3_chart()
 
+"""
+    Simula la asignación manual de una puerta.
+    Datos requeridos:
+        - ID avión
+        - Aerolínea
+        - Origen
+    Resultado:
+        Asigna una puerta compatible si existe disponibilidad.
+"""
 def ui_assign_gate_manually():
     global current_bcn
     if not current_bcn:
@@ -174,6 +292,17 @@ def ui_assign_gate_manually():
         log_info(f"V3: Conflicto de asignación para {a_id}. Sin espacio compatible.")
         messagebox.showwarning("Aviso de Ocupación", "No quedan puertas compatibles libres.")
 
+"""
+    Actualiza la tabla visual de puertas de embarque.
+    Funcionamiento:
+        - Consulta el estado de ocupación desde LEBL.
+        - Limpia el Listbox actual.
+        - Inserta nuevamente todas las puertas.
+    Formato mostrado:
+        Puerta: <ID> | Estado: <Libre/Ocupada> | ID Vuelo
+    Resultado:
+        Refresco visual completo del panel de gates.
+"""
 def ui_refresh_gates_grid():
     listbox_gates.delete(0, tk.END)
     for g_info in LEBL.GateOccupancy(current_bcn):
@@ -181,6 +310,19 @@ def ui_refresh_gates_grid():
         if g_info[2]: line += f" | ID Vuelo: {g_info[2]}"
         listbox_gates.insert(tk.END, line)
 
+"""
+    Genera el gráfico de ocupación de puertas.
+    Funcionamiento:
+        - Obtiene el filtro ICAO opcional.
+        - Limpia gráficos previos.
+        - Genera gráfico Matplotlib.
+        - Inserta el gráfico en Tkinter.
+    Filtro:
+        Si se especifica una aerolínea:
+            - Se resaltan únicamente sus puertas ocupadas.
+    Resultado:
+        Visualización dinámica del estado operativo de terminales y puertas.
+"""
 def ui_draw_v3_chart():
     global current_bcn
     if not current_bcn: return
@@ -194,6 +336,19 @@ def ui_draw_v3_chart():
     canvas.draw()
     canvas.get_tk_widget().pack(fill="both", expand=True)
 
+"""
+    Exporta los vuelos en formato KML.
+    Requisitos:
+        - Estructura LEBL cargada.
+        - Vuelos cargados.
+        - Aeropuertos disponibles.
+    Funcionamiento:
+        - Genera archivo .kml
+        - Compatible con Google Earth.
+        - Permite abrir automáticamente el mapa.
+    Resultado:
+        Archivo KML exportado correctamente.
+"""
 def ui_export_kml_v3():
     global current_bcn, aircrafts, airports
     if not current_bcn or not aircrafts:
@@ -216,13 +371,34 @@ def ui_export_kml_v3():
             import subprocess
             subprocess.call(('open', fn))
         except Exception:
-            messagebox.showerror("Error",
-                                 "No se detectó un visor KML (como Google Earth Pro) instalado de forma nativa.")
+            messagebox.showerror("Error", "No se detectó un visor KML (como Google Earth Pro) instalado de forma nativa.")
 
 # =====================================================================
 # DISEÑO ESTÉTICO DE LA INTERFAZ (ESTILO JAPONÉS MINIMALISTA)
 # =====================================================================
 
+"""
+   Toda la sección siguiente construye visualmente la aplicación mediante Tkinter.
+   Estructura principal:
+       - Ventana principal
+       - Panel izquierdo
+       - Panel central
+       - Panel derecho
+       - Barra inferior de controles
+   Estilo visual:
+       Inspiración japonesa minimalista:
+           - Colores suaves pastel
+           - Tipografía limpia
+           - Distribución zen y ordenada
+"""
+
+"""
+   Configuración global de la aplicación.
+   Características:
+       - Resolución inicial
+       - Color de fondo
+       - Título del programa
+"""
 root = tk.Tk()
 root.title("Airport Operations Suite — Minimalist Edition")
 root.geometry("1300x820")
@@ -243,7 +419,7 @@ style_filter = {"bg": "#fce4d6", "fg": "#c65911", "activebackground": "#f8cfb6"}
 main_frame = tk.Frame(root, bg="#fcfcfc")
 main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-# --- PANEL IZQUIERDO: Listas V1 y V2 ---
+# --- PANEL IZQUIERDO: Listas V1 y V2 --- #
 panel_izq = tk.Frame(main_frame, bg="#fcfcfc")
 panel_izq.pack(side="left", fill="both", expand=True, padx=(0, 15))
 
@@ -273,7 +449,7 @@ tk.Label(f_apt, text="Lon:", font=font_ui, bg="#ffffff").grid(row=0, column=4, p
 entry_lon = tk.Entry(f_apt, width=8, font=font_ui);
 entry_lon.grid(row=0, column=5, padx=5)
 
-# --- PANEL CENTRAL: Gestión de Puertas V3 ---
+# --- PANEL CENTRAL: Gestión de Puertas V3 --- #
 panel_centro = tk.Frame(main_frame, bg="#fcfcfc")
 panel_centro.pack(side="left", fill="both", expand=True, padx=15)
 
@@ -311,7 +487,7 @@ btn_apply_filter = tk.Button(f_filter, text="Filtrar Gráfico", command=ui_draw_
                              **style_filter)
 btn_apply_filter.pack(side="left", padx=5)
 
-# --- PANEL DERECHO: Visor de Gráficos e Historial ---
+# --- PANEL DERECHO: Visor de Gráficos e Historial --- #
 panel_der = tk.Frame(main_frame, bg="#fcfcfc")
 panel_der.pack(side="right", fill="both", expand=True, padx=(15, 0))
 
@@ -324,7 +500,7 @@ plot_frame = tk.LabelFrame(panel_der, text=" Cuadro de Mapeo Visual (Matplotlib)
 plot_frame.pack(fill="both", expand=True)
 plot_frame.pack_propagate(False)
 
-# --- CONTROL INFERIOR: BOTONERAS DE OPERACIONES ---
+# --- CONTROL INFERIOR: BOTONERAS DE OPERACIONES --- #
 bottom_bar = tk.Frame(root, bg="#fcfcfc")
 bottom_bar.pack(fill="x", padx=20, pady=(0, 20))
 
