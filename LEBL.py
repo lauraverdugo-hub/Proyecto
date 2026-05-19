@@ -285,7 +285,7 @@ def AssignGate(bcn, aircraft):
                             return None  # Éxito
     return -1  # No hay puertas disponibles
 
-# --- GRÁFICO APILADO REQUERIDO PARA LA INTERFAZ ---
+# --- GRÁFICO APILADO REQUERIDO PARA LA INTERFAZ --- #
 
 """
     Genera un gráfico de barras apiladas que muestra la ocupación de puertas por área.
