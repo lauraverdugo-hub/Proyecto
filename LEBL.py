@@ -1,28 +1,79 @@
 import matplotlib.pyplot as plt
 
+"""
+    Clase que representa una puerta de embarque del aeropuerto.
+    Parámetros:
+        name (str): Nombre identificador de la puerta.
+    Atributos:
+        name (str): Nombre de la puerta.
+        occupied (bool): Indica si la puerta está ocupada.
+        aircraft_id (str): Identificador del avión asignado a la puerta.
+"""
 class Gate:
     def __init__(self, name):
         self.name = name
         self.occupied = False
         self.aircraft_id = ""
 
+"""
+    Clase que representa una zona de embarque.
+    Parámetros:
+        name (str): Nombre del área de embarque.
+        area_type (str): Tipo de área ("Schengen" o "non-Schengen").
+    Atributos:
+        name (str): Nombre del área.
+        type (str): Tipo de vuelos permitidos.
+        gates (list): Lista de puertas de embarque del área.
+    """
 class BoardingArea:
     def __init__(self, name, area_type):
         self.name = name
         self.type = area_type  # "Schengen" o "non-Schengen"
         self.gates = []
 
+"""
+    Clase que representa una terminal del aeropuerto.
+    Parámetros:
+        name (str): Nombre de la terminal.
+    Atributos:
+        name (str): Nombre de la terminal.
+        boarding_areas (list): Lista de áreas de embarque.
+        airlines (list): Lista de códigos ICAO de aerolíneas permitidas.
+    """
 class Terminal:
     def __init__(self, name):
         self.name = name
         self.boarding_areas = []
         self.airlines = []  # Lista de códigos ICAO
 
+"""
+    Clase principal del aeropuerto de Barcelona.
+    Parámetros:
+        code (str): Código ICAO/IATA del aeropuerto.
+    Atributos:
+        code (str): Código del aeropuerto.
+        terminals (list): Lista de terminales del aeropuerto.
+    """
 class BarcelonaAP:
     def __init__(self, code):
         self.code = code
         self.terminals = []
 
+"""
+    Clase que representa un avión.
+    Parámetros:
+        aircraft_id (str): Identificador del avión.
+        airline_company (str): Código ICAO de la aerolínea.
+        origin_airport (str): Código ICAO del aeropuerto de origen.
+        scheduled_time (str): Hora programada del vuelo.
+        is_schengen (bool, opcional): Indica si el vuelo es Schengen. Por defecto True.
+    Atributos:
+        aircraft_id : str
+        airline_company : str
+        origin_airport : str
+        scheduled_time : str
+        is_schengen : bool
+    """
 class Aircraft:
     def __init__(self, aircraft_id, airline_company, origin_airport, scheduled_time, is_schengen=True):
         self.aircraft_id = aircraft_id
@@ -31,6 +82,19 @@ class Aircraft:
         self.scheduled_time = scheduled_time
         self.is_schengen = is_schengen
 
+"""
+    Genera y asigna puertas de embarque a un área.
+    Parámetros:
+        area (BoardingArea): Área de embarque donde se añadirán las puertas.
+        init_gate (int): Número inicial de puerta.
+        end_gate (int): Número final de puerta.
+        prefix (str): Prefijo identificador de las puertas.
+    Formato:
+        Las puertas se crean con el formato: <prefix><numero>
+    Resultado:
+        None: Si la operación se realiza correctamente.
+        -1: Si el rango de puertas es inválido.
+    """
 def SetGates(area, init_gate, end_gate, prefix):
     if end_gate <= init_gate:
         return -1
@@ -44,6 +108,18 @@ def SetGates(area, init_gate, end_gate, prefix):
         i += 1
     return None
 
+"""
+    Carga las aerolíneas permitidas de una terminal desde un archivo.
+    Parámetros:
+        terminal (Terminal): Terminal donde se cargarán las aerolíneas.
+        t_name (str): Nombre de la terminal.
+    Formato del archivo:
+        Archivo: <Terminal>_Airlines.txt
+        Cada línea: nombre_aerolinea<TAB>codigo_ICAO
+    Resultado:
+        None: Si la carga fue correcta.
+        -1: Si el archivo no existe.
+    """
 def LoadAirlines(terminal, t_name):
     filename = f"{t_name}_Airlines.txt"
     try:
@@ -58,6 +134,20 @@ def LoadAirlines(terminal, t_name):
         return -1
     return None
 
+"""
+    Carga la estructura completa del aeropuerto desde un archivo.
+    Parámetros:
+        filename (str): Nombre del archivo con la estructura del aeropuerto.
+    Formato del archivo:
+        Primera línea: 
+              CODIGO_AEROPUERTO numero_terminales
+        Líneas siguientes:
+              Terminal T1 2
+              Area A Schengen Gates 1 - 10
+    Resultado:
+        BarcelonaAP: Objeto aeropuerto cargado correctamente.
+        None: Si ocurre un error de lectura o formato.
+    """
 def LoadAirportStructure(filename):
     try:
         with open(filename, "r", encoding="utf-8") as f:
@@ -104,6 +194,13 @@ def LoadAirportStructure(filename):
     except (FileNotFoundError, IndexError, ValueError):
         return None
 
+"""
+    Genera una lista con el estado de ocupación de las puertas.
+    Parámetros:
+        bcn (Objeto BarcelonaAP): Aeropuerto a consultar.
+    Resultado:
+        list (Lista de listas con el formato): [nombre_puerta, estado, id_avion]
+    """
 def GateOccupancy(bcn):
     occupancy_list = []
     for term in bcn.terminals:
@@ -113,6 +210,17 @@ def GateOccupancy(bcn):
                 occupancy_list.append([gate.name, status, gate.aircraft_id])
     return occupancy_list
 
+"""
+    Verifica si una aerolínea pertenece a una terminal específica.
+    Parámetros:
+        terminal (Terminal): Terminal donde buscar.
+        name (str): Código ICAO de la aerolínea.
+    Resultado:
+        tuple (bool, int)        
+        bool: True si existe la aerolínea.
+        int: 0  -> operación correcta
+            -1 -> nombre vacío
+    """
 def IsAirlineInTerminal(terminal, name):
     if name == "" or name is None:
         return False, -1  # Retorna booleano y código de error según enunciado
@@ -122,6 +230,16 @@ def IsAirlineInTerminal(terminal, name):
         return True, 0
     return False, 0
 
+"""
+    Busca la terminal asociada a una aerolínea.
+    Parámetros:
+        bcn (Objeto BarcelonaAP): Aeropuerto.
+        airline_name (str): Código ICAO de la aerolínea.
+    Resultado:
+        (str)
+        Nombre de la terminal encontrada.
+        Cadena vacía si no existe.
+    """
 def SearchTerminal(bcn, airline_name):
     for term in bcn.terminals:
         found, code = IsAirlineInTerminal(term, airline_name)
@@ -129,6 +247,18 @@ def SearchTerminal(bcn, airline_name):
             return term.name
     return ""
 
+"""
+    Asigna de forma automática una puerta libre a un avión basándose en su aerolínea y tipo de vuelo (Schengen/No-Schengen).    
+    Parámetros:
+        bcn (Objeto BarcelonaAP): Aeropuerto.
+        aircraft (Objeto Aircraft): Avión a asignar.
+    Condiciones:
+        - La terminal depende de la aerolínea.
+        - El área debe coincidir con el tipo de vuelo.
+    Resultado:
+        None: Asignación correcta.
+        -1: No hay puertas disponibles o aerolínea inválida.
+    """
 def AssignGate(bcn, aircraft):
     t_name = SearchTerminal(bcn, aircraft.airline_company)
     if not t_name:
@@ -157,6 +287,15 @@ def AssignGate(bcn, aircraft):
 
 # --- GRÁFICO APILADO REQUERIDO PARA LA INTERFAZ ---
 
+"""
+    Genera un gráfico de barras apiladas que muestra la ocupación de puertas por área.
+    Parámetros:
+        bcn (Objeto BarcelonaAP): Aeropuerto.
+        target_frame (object, opcional): Frame de interfaz gráfica.
+        airline_filter (str, opcional): Filtra ocupación por aerolínea.
+    Resultado:
+        matplotlib.figure.Figure: Figura generada del gráfico.
+    """
 def PlotOccupancyChart(bcn, target_frame=None, airline_filter=None):
     areas_names = []
     occupied_counts = []
@@ -200,6 +339,19 @@ def PlotOccupancyChart(bcn, target_frame=None, airline_filter=None):
         plt.show()
     return fig
 
+"""
+    Exporta rutas de vuelos en formato KML para Google Earth coloreadas según la terminal de destino.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        bcn (Objeto BarcelonaAP): Aeropuerto.
+        airports_list (list): Lista de aeropuertos con coordenadas.
+        filename (str, opcional): Nombre del archivo KML de salida.
+    Formato generado:
+        Archivo .kml compatible con Google Earth.
+    Resultado:
+        (str)
+        Nombre del archivo KML generado.
+    """
 def ExportFlightsToKMLWithTerminal(aircrafts, bcn, airports_list, filename="vuelos_terminales.kml"):
     # Mapeo rápido de coordenadas de aeropuertos para calcular las rutas
     apt_coords = {a.icao_code: (a.latitude, a.longitude) for a in airports_list}
@@ -258,11 +410,23 @@ def ExportFlightsToKMLWithTerminal(aircrafts, bcn, airports_list, filename="vuel
 
 # ------------------- TEST SECTION ---------------- #
 
+"""
+   Este bloque ejecuta una serie de pruebas para verificar el funcionamiento correcto del sistema de gestión aeroportuaria.
+   Pruebas realizadas:
+    1. Carga de la estructura del aeropuerto desde archivo.
+    2. Búsqueda de aerolíneas en terminales.
+    3. Asignación automática de puertas de embarque.
+    4. Generación del reporte de ocupación.
+    5. Verificación de control de errores.
+    6. Visualización gráfica de ocupación.
+   Ejecución:
+         Este bloque solo se ejecuta cuando el archivo se lanza directamente: python nombre_archivo.py
+"""
+
 if __name__ == "__main__":
     print("--- INICIANDO TEST DE SISTEMA LEBL ---")
 
     # 1. Probar carga de estructura
-    # Cambia "Terminals.txt" por "LEBL.txt" si ese es el nombre de tu archivo
     mi_aeropuerto = LoadAirportStructure("Terminals.txt")
 
     if mi_aeropuerto is None:
