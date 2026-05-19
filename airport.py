@@ -71,23 +71,37 @@ def CoordToString(decimal, is_lat):
     else:
         return "{}{:03d}{:02d}{:02d}".format(direction, deg, min_, sec)
 
-
 def LoadAirports(filename):
     airports = []
     try:
-        with open(filename, "r") as F: # abre archivo y se cierra automáticamente
-            next(F)  # saltar encabezado
+        with open(filename, "r") as F:
+            next(F)  # saltar encabezado: CODE LAT LON
             for line in F:
                 parts = line.strip().split()
+                # El archivo tiene 3 columnas: ICAO, LAT, LON
                 if len(parts) == 3:
                     code = parts[0]
                     lat_str = parts[1]
                     lon_str = parts[2]
-                    latitude = ConvertCoord(lat_str)
-                    longitude = ConvertCoord(lon_str)
-                    airports.append(Airport(code, latitude, longitude))
+
+                    try:
+                        latitude = ConvertCoord(lat_str)
+                        longitude = ConvertCoord(lon_str)
+
+                        nuevo_ap = Airport(code, latitude, longitude)
+                        airports.append(nuevo_ap)
+                    except Exception as e:
+                        print(f"Error procesando línea {code}: {e}")
+                else:
+                    # Esto te avisará en consola si una línea no tiene 3 columnas
+                    print(f"Línea ignorada (formato incorrecto): {line.strip()}")
     except FileNotFoundError:
+        print("Error: Archivo no encontrado")
         return []
+    except Exception as e:
+        print(f"Error general: {e}")
+        return []
+
     return airports
 
 def SaveSchengenAirports(airports, filename):
@@ -138,7 +152,7 @@ def RemoveAirport(airports, code):
 
 import matplotlib.pyplot as plt
 
-def PlotAirports(airports):
+def PlotAirports(airports, ax):
 # Muestra un gráfico de barras apiladas con aeropuertos Schengen y no Schengen.
     schengen_count = 0
     non_schengen_count = 0
@@ -149,51 +163,58 @@ def PlotAirports(airports):
             non_schengen_count += 1
 
     # Datos para la gráfica
-    labels = ['Airports'] # etiqueta de la barra en el eje X
-    # listas con los valores que se van a graficar
+    labels = ['Airports']
     schengen = [schengen_count]
     non_schengen = [non_schengen_count]
 
-    # Crear gráfica de barras apiladas
-    plt.bar(labels, schengen, label='Schengen', color='#87CEFA')
-    plt.bar(labels, non_schengen, bottom=schengen, label='No Schengen', color='#FF7F7F')
+    # Limpiar eje por si había un gráfico anterior
+    ax.clear()
 
-    plt.ylabel('Count') # etiqueta vertical (eje Y)
-    plt.title('Schengen vs No Schengen Airports')
-    plt.legend() # muestra la leyenda con colores y etiquetas
-    plt.show()
+    # Fondo minimalista
+    ax.set_facecolor("#ffffff")
 
-def MapAirports(airports, filename = "airports.kml"):
-# Genera un archivo KML para ver los aeropuertos en Google Earth.
-    F = open(filename, "w")
-    # Encabezado KML
-    F.write("""<?xml version="1.0" encoding="UTF-8"?>
+    # Barras apiladas
+    ax.bar(labels,schengen,label='Schengen',color='#87CEFA')
+    ax.bar(labels,non_schengen,bottom=schengen,label='No Schengen',color='#FF7F7F')
+
+    # Estilo
+    ax.set_ylabel('Count')
+    ax.set_title('Schengen vs No Schengen Airports')
+
+    ax.legend()
+
+    # Grid suave opcional
+    ax.grid(axis='y',linestyle='--',alpha=0.3)
+
+def MapAirports(airports, filename="airports.kml"):
+    try:
+        F = open(filename, "w")
+        F.write("""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
+    <name>Aeropuertos Resaltados</name>
+    <Style id="highlightStyle">
+        <IconStyle>
+            <color>ff00ffff</color> <scale>2.5</scale>      <Icon>
+                <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+            </Icon>
+        </IconStyle>
+        <LabelStyle>
+            <scale>1.5</scale>      <color>ff00ffff</color>
+        </LabelStyle>
+    </Style>
 """)
-    for a in airports:
-        color = "#ffff0000" if a.schengen else "ff0000ff"  # KML: ABGR (azul/rojo)
-        F.write(f"""
+        for a in airports:
+            F.write(f"""
     <Placemark>
         <name>{a.icao_code}</name>
-        <Style>
-            <IconStyle>
-                <color>{color}</color>
-                <scale>1.1</scale>
-                <Icon>
-                    <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
-                </Icon>
-            </IconStyle>
-        </Style>
+        <styleUrl>#highlightStyle</styleUrl>
         <Point>
             <coordinates>{a.longitude},{a.latitude},0</coordinates>
         </Point>
     </Placemark>
 """)
-    # Cierre KML
-    F.write("""
-</Document>
-</kml>
-""")
-    F.close()
-    print(f"Archivo {filename} creado. Ábrelo con Google Earth.")
+        F.write("</Document>\n</kml>")
+        F.close()
+    except Exception as e:
+        print(f"Error al crear KML: {e}")

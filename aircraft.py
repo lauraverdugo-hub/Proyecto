@@ -1,4 +1,5 @@
 from airport import IsSchengenAirport
+import matplotlib.pyplot as plt
 
 class Aircraft:
     def __init__(self, aircraft_id, airline_company, origin_airport, landing_time):
@@ -32,9 +33,7 @@ def LoadArrivals(filename):
         return []
     return aircrafts
 
-import matplotlib.pyplot as plt
-
-def PlotArrivals(aircrafts):
+def PlotArrivals(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -56,14 +55,22 @@ def PlotArrivals(aircrafts):
     # Configuración de la gráfica
     hours_labels = [f"{h}h" for h in range(24)] # Coge el número (entre 0 y 23) que hay en h y le pone la letra "h" al final
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(hours_labels, hours_count, color='skyblue', edgecolor='navy', label='Flights per hour')
-    plt.xlabel('Hour of the Day')
-    plt.ylabel('Number of Landings')
-    plt.title('Landing Frequency at Barcelona El Prat (LEBL)')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.legend()
-    plt.show()
+    # Limpiar eje
+    ax.clear()
+
+    # Fondo minimalista
+    ax.set_facecolor("#ffffff")
+
+    # Barras
+    ax.bar(hours_labels,hours_count,color='#9dc3e6',edgecolor='#2f5597',label='Flights per hour')
+
+    # Configuración
+    ax.set_xlabel('Hour of the Day')
+    ax.set_ylabel('Number of Landings')
+    ax.set_title('Landing Frequency at Barcelona El Prat (LEBL)')
+
+    ax.grid(axis='y',linestyle='--',alpha=0.5)
+    ax.legend()
 
 def SaveFlights(aircrafts, filename):
     if not aircrafts:
@@ -102,7 +109,7 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
-def PlotAirlines(aircrafts):
+def PlotAirlines(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -120,22 +127,28 @@ def PlotAirlines(aircrafts):
 
     # 2. Preparar datos para el gráfico
     # Convertimos el diccionario en dos listas independientes
-    labels = list(airline_counts.keys()) # Nombres de las aerolíneas
-    values = list(airline_counts.values()) # Cantidades
+    labels = list(airline_counts.keys())
+    values = list(airline_counts.values())
 
-    # 3. Configuración de la gráfica
-    plt.figure(figsize=(12, 6))
-    plt.bar(labels, values, color='orange', edgecolor='darkorange', label='Flights per airline')
-    plt.xticks(rotation=90, fontsize=8)  # Rotación + letra más pequeña
-    plt.xlabel('Airline (ICAO Code)')
-    plt.ylabel('Number of Flights')
-    plt.title('Flights per Airline arriving at LEBL')
-    plt.tight_layout()  # Ajusta márgenes automáticamente para que no se corten las letras
-    plt.grid(axis='y', linestyle='--', alpha=0.6)
-    plt.legend()
-    plt.show()
+    # Limpiar eje
+    ax.clear()
 
-def PlotFlightsType(aircrafts):
+    # Estilo visual
+    ax.set_facecolor("#ffffff")
+
+    # Barras
+    ax.bar(labels,values,color='#f4b183',edgecolor='#c55a11',label='Flights per airline')
+
+    # Configuración
+    ax.set_xlabel('Airline (ICAO Code)')
+    ax.set_ylabel('Number of Flights')
+    ax.set_title('Flights per Airline arriving at LEBL')
+
+    ax.tick_params(axis='x', rotation=90, labelsize=8)
+    ax.grid(axis='y',linestyle='--',alpha=0.5)
+    ax.legend()
+
+def PlotFlightsType(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -153,19 +166,27 @@ def PlotFlightsType(aircrafts):
         j += 1
 
     # Configuración de la gráfica de barras apiladas
-    labels = ['Flights Type'] # Solo hay una etiqueta porque solo queremos una columna en el eje X
+    labels = ['Flights Type']
     s_data = [schengen_count]
     ns_data = [non_schengen_count]
 
-    plt.figure(figsize=(9, 6))
-    # Barra de abajo (Schengen)
-    plt.bar(labels, s_data, label='Schengen', color='#87CEFA')
-    # Barra de arriba (No Schengen), usamos bottom para apilarla
-    plt.bar(labels, ns_data, bottom=s_data, label='No Schengen', color='#FF7F7F')
-    plt.ylabel('Count')
-    plt.title('Schengen vs No-Schengen Arrivals')
-    plt.legend()
-    plt.show()
+    # Limpiar eje
+    ax.clear()
+
+    # Fondo limpio
+    ax.set_facecolor("#ffffff")
+
+    # Barras apiladas
+    ax.bar(labels,s_data,label='Schengen',color='#87CEFA')
+
+    ax.bar(labels,ns_data,bottom=s_data,label='No Schengen',color='#FF7F7F')
+
+    # Configuración
+    ax.set_ylabel('Count')
+    ax.set_title('Schengen vs No-Schengen Arrivals')
+
+    ax.grid(axis='y',linestyle='--',alpha=0.3)
+    ax.legend()
 
 def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
     lebl_lat, lebl_lon = 41.297, 2.083 # Definimos las coordenadas del aeropuerto LEBL
@@ -223,7 +244,7 @@ def CalculateHaversine(lat1, lon1, lat2, lon2):
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
     lam1, lam2 = math.radians(lon1), math.radians(lon2)
 
-    # Diferencias
+    # Diferencias de lat y lon
     d_phi = phi1 - phi2
     d_lam = lam1 - lam2
 
@@ -252,24 +273,37 @@ def LongDistanceArrivals(aircrafts, airports_dict):
 # ---------------- TEST SECTION ---------------- #
 
 if __name__ == "__main__":
+
     # 1. Cargamos los datos del archivo
     archivo_entrada = "arrivals.txt"
     lista_vuelos = LoadArrivals(archivo_entrada)
-
     if not lista_vuelos:
         print(f"Error: No se pudo cargar el archivo {archivo_entrada} o está vacío.")
     else:
         print(f"Se han cargado {len(lista_vuelos)} vuelos con éxito.")
 
-        # 2. Probar visualización de frecuencias por hora
+        # =========================================================
+        # PRUEBA 1 - GRÁFICO DE LLEGADAS POR HORA
+        # =========================================================
+
         print("Generando gráfico de llegadas por hora...")
-        PlotArrivals(lista_vuelos)
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
+        PlotArrivals(lista_vuelos, ax1)
+        plt.show()
 
-        # 3. Probar visualización por aerolínea
+        # =========================================================
+        # PRUEBA 2 - GRÁFICO POR AEROLÍNEA
+        # =========================================================
+
         print("Generando gráfico de vuelos por aerolínea...")
-        PlotAirlines(lista_vuelos)
+        fig2, ax2 = plt.subplots(figsize=(12, 6))
+        PlotAirlines(lista_vuelos, ax2)
+        plt.show()
 
-        # 4. Probar guardado de vuelos
+        # =========================================================
+        # GUARDADO DE VUELOS
+        # =========================================================
+
         archivo_salida = "arrivals_saved.txt"
         error_save = SaveFlights(lista_vuelos, archivo_salida)
         if error_save:
@@ -277,34 +311,44 @@ if __name__ == "__main__":
         else:
             print(f"Archivo guardado correctamente como: {archivo_salida}")
 
-        # --- PRUEBAS QUE REQUIEREN DATOS EXTERNOS --- #
-        # Nota: Para probar estas, simularemos un pequeño diccionario de aeropuertos
-        # En una aplicación real, esto vendría de tu módulo airport.py
+        # =========================================================
+        # DATOS DE PRUEBA PARA AEROPUERTOS
+        # =========================================================
 
-        # Diccionario de prueba: { Código: Objeto con lat/lon }
-        # Usamos una clase sencilla para emular el objeto Airport
         class MockAirport:
             def __init__(self, lat, lon):
                 self.latitude = lat
                 self.longitude = lon
 
         test_airports = {
-            "MAD": MockAirport(40.49, -3.56),  # Madrid (Schengen, < 2000km)
-            "JFK": MockAirport(40.64, -73.77),  # Nueva York (No-Schengen, > 2000km)
-            "LHR": MockAirport(51.47, -0.45)  # Londres (No-Schengen, < 2000km)
+            "MAD": MockAirport(40.49, -3.56),
+            "JFK": MockAirport(40.64, -73.77),
+            "LHR": MockAirport(51.47, -0.45)
         }
 
-        # 5. Probar filtrado de larga distancia
+        # =========================================================
+        # FILTRADO DE VUELOS LARGOS
+        # =========================================================
+
         print("Filtrando vuelos de larga distancia (>2000km)...")
-        vuelos_largos = LongDistanceArrivals(lista_vuelos, test_airports)
+        vuelos_largos = LongDistanceArrivals(lista_vuelos,test_airports)
         print(f"Vuelos de larga distancia encontrados: {len(vuelos_largos)}")
 
-        # 6. Probar clasificación Schengen (Gráfico de barras apiladas)
-        print("Generando gráfico Schengen vs No-Schengen...")
-        PlotFlightsType(lista_vuelos)
+        # =========================================================
+        # PRUEBA 3 - SCHENGEN VS NO SCHENGEN
+        # =========================================================
 
-        # 7. Probar generación del archivo KML llamado vuelos_barcelona.kml
+        print("Generando gráfico Schengen vs No-Schengen...")
+        fig3, ax3 = plt.subplots(figsize=(9, 6))
+        PlotFlightsType(lista_vuelos, ax3)
+        plt.show()
+
+        # =========================================================
+        # GENERACIÓN KML
+        # =========================================================
+
         print("Generando archivo KML para Google Earth...")
-        MapFlights(lista_vuelos, test_airports, "vuelos_barcelona.kml")
+
+        MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
 
     print("\n--- Pruebas finalizadas ---")

@@ -1,35 +1,45 @@
 from airport import *
+import matplotlib.pyplot as plt
 
-# Crear un aeropuerto manual y comprovar si pertenece a Schengen
-airport1 = Airport ("LEBL", 41.297445, 2.0832941)
+# =========================================================
+# CREACIÓN MANUAL DE AEROPUERTOS
+# =========================================================
+
+airport1 = Airport("LEBL", 41.297445, 2.0832941)
 SetSchengen(airport1)
-PrintAirport (airport1)
+PrintAirport(airport1)
 
 print("   ")
 
-airport2 = Airport ("LFPG", 49.0097, 2.5479)
+airport2 = Airport("LFPG", 49.0097, 2.5479)
 SetSchengen(airport2)
-PrintAirport (airport2)
+PrintAirport(airport2)
 
 print("   ")
 
-airport3 = Airport ("KJFK", 40.6413, -73.7781)
+airport3 = Airport("KJFK", 40.6413, -73.7781)
 SetSchengen(airport3)
-PrintAirport (airport3)
+PrintAirport(airport3)
 
 print("-----")
 
-# Cargar aeropuertos desde archivo
-airports = LoadAirports("airports.py")  # asegúrate de tener este archivo con datos DMS
+# =========================================================
+# CARGA DE AEROPUERTOS DESDE ARCHIVO
+# =========================================================
+
+airports = LoadAirports("airports.txt")
 print(f"Cargados {len(airports)} aeropuertos")
 for a in airports:
-    SetSchengen(a)  # marcar si es Schengen
+    SetSchengen(a)
     PrintAirport(a)
 
 print("-----")
 
-# Agregar un aeropuerto
-new_airport = Airport("LIS", 38.774, -9.134)  # Lisboa
+# =========================================================
+# AGREGAR AEROPUERTO
+# =========================================================
+
+new_airport = Airport("LIS", 38.774, -9.134)
 SetSchengen(new_airport)
 AddAirport(airports, new_airport)
 for a in airports:
@@ -38,28 +48,50 @@ for a in airports:
 
 print("-----")
 
-# Eliminar un aeropuerto
-RemoveAirport(airports, "CYUL")  # Montreal, si existía en lista
+# =========================================================
+# ELIMINAR AEROPUERTO
+# =========================================================
+
 print("Antes de eliminar CYUL:")
 for a in airports:
     PrintAirport(a)
+RemoveAirport(airports, "CYUL")
 print("Después de eliminar CYUL:")
+found = False
 for a in airports:
     if a.icao_code == "CYUL":
         PrintAirport(a)
+        found = True
+if not found:
+    print("CYUL eliminado correctamente.")
 
 print("-----")
 
-# Guardar aeropuertos Schengen en archivo
-ret_code = SaveSchengenAirports(airports, "schengen_airports.py")
+# =========================================================
+# GUARDAR AEROPUERTOS SCHENGEN
+# =========================================================
+
+ret_code = SaveSchengenAirports(airports,"schengen_airports.txt")
 if ret_code == -1:
     print("No hay aeropuertos Schengen para guardar")
 else:
-    print("Archivo schengen_airports.py creado con aeropuertos Schengen")
+    print("Archivo schengen_airports.txt creado con aeropuertos Schengen")
 
 print("-----")
 
-# Mostrar gráfica y mapa de Google Earth
-PlotAirports(airports)   # Muestra gráfico de barras
+# =========================================================
+# GRÁFICO DE AEROPUERTOS
+# =========================================================
 
-MapAirports(airports)    # Genera archivo KML para Google Earth
+print("Generando gráfico de aeropuertos...")
+fig, ax = plt.subplots(figsize=(8, 5))
+PlotAirports(airports, ax)
+plt.show()
+
+# =========================================================
+# MAPA KML
+# =========================================================
+
+print("Generando archivo KML para Google Earth...")
+MapAirports(airports)
+print("\n--- Pruebas finalizadas ---")
