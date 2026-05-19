@@ -119,8 +119,6 @@ def CoordToString(decimal, is_lat):
     else:
         return "{}{:03d}{:02d}{:02d}".format(direction, deg, min_, sec)
 
-<<<<<<< HEAD
-=======
 """
     Crea una lista de objetos Airport a partir de un archivo de texto.
     Parámetros:
@@ -128,7 +126,6 @@ def CoordToString(decimal, is_lat):
     Resultado:
         list: Lista de objetos Airport. Si hay error, devuelve la lista vacía.
 """
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
 def LoadAirports(filename):
     airports = []
     try:
@@ -232,11 +229,6 @@ def RemoveAirport(airports, code):
         i += 1
     return "Error in the code" # código de error
 
-import matplotlib.pyplot as plt
-
-<<<<<<< HEAD
-def PlotAirports(airports, ax):
-=======
 """
     Genera y muestra un gráfico de barras comparando aeropuertos Schengen vs No Schengen.
     Parámetros:
@@ -244,8 +236,7 @@ def PlotAirports(airports, ax):
     Resultado:
         Genera una gráfica de barras apiladas utilizando matplotlib.
 """
-def PlotAirports(airports):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+def PlotAirports(airports, ax):
 # Muestra un gráfico de barras apiladas con aeropuertos Schengen y no Schengen.
     schengen_count = 0
     non_schengen_count = 0
@@ -266,7 +257,6 @@ def PlotAirports(airports):
     # Fondo minimalista
     ax.set_facecolor("#ffffff")
 
-<<<<<<< HEAD
     # Barras apiladas
     ax.bar(labels,schengen,label='Schengen',color='#87CEFA')
     ax.bar(labels,non_schengen,bottom=schengen,label='No Schengen',color='#FF7F7F')
@@ -274,17 +264,11 @@ def PlotAirports(airports):
     # Estilo
     ax.set_ylabel('Count')
     ax.set_title('Schengen vs No Schengen Airports')
-
     ax.legend()
 
     # Grid suave opcional
     ax.grid(axis='y',linestyle='--',alpha=0.3)
 
-def MapAirports(airports, filename="airports.kml"):
-    try:
-        F = open(filename, "w")
-        F.write("""<?xml version="1.0" encoding="UTF-8"?>
-=======
 """
     Genera un archivo KML para visualizar aeropuertos en Google Earth.
     Parámetros:
@@ -297,45 +281,36 @@ def MapAirports(airports, filename="airports.kml"):
 """
 def MapAirports(airports, filename = "airports.kml"):
 # Genera un archivo KML para ver los aeropuertos en Google Earth.
-    F = open(filename, "w")
-    # Encabezado KML
-    F.write("""<?xml version="1.0" encoding="UTF-8"?>
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+# Schengen -> azul, No Schengen -> rojo
+   F = open(filename, "w")
+   # Encabezado KML
+   F.write("""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
-    <name>Aeropuertos Resaltados</name>
-    <Style id="highlightStyle">
-        <IconStyle>
-            <color>ff00ffff</color> <scale>2.5</scale>      <Icon>
-                <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
-            </Icon>
-        </IconStyle>
-        <LabelStyle>
-            <scale>1.5</scale>      <color>ff00ffff</color>
-        </LabelStyle>
-    </Style>
 """)
-        for a in airports:
-            F.write(f"""
-    <Placemark>
-        <name>{a.icao_code}</name>
-        <styleUrl>#highlightStyle</styleUrl>
-        <Point>
-            <coordinates>{a.longitude},{a.latitude},0</coordinates>
-        </Point>
-    </Placemark>
+   for a in airports:
+       color = "#ffff0000" if a.schengen else "ff0000ff"  # KML: ABGR (verde/rojo)
+       F.write(f"""
+   <Placemark>
+       <name>{a.icao_code}</name>
+       <Style>
+           <IconStyle>
+               <color>{color}</color>
+               <scale>1.1</scale>
+               <Icon>
+                   <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+               </Icon>
+           </IconStyle>
+       </Style>
+       <Point>
+           <coordinates>{a.longitude},{a.latitude},0</coordinates>
+       </Point>
+   </Placemark>
 """)
-<<<<<<< HEAD
-        F.write("</Document>\n</kml>")
-        F.close()
-    except Exception as e:
-        print(f"Error al crear KML: {e}")
-=======
-    # Cierre KML
-    F.write("""
+   # Cierre KML
+   F.write("""
 </Document>
 </kml>
 """)
-    F.close()
-    print(f"Archivo {filename} creado. Ábrelo con Google Earth.")
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+   F.close()
+   print(f"Archivo {filename} creado. Ábrelo con Google Earth.")
