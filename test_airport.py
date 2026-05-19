@@ -155,8 +155,12 @@ print("-----")
 """
 # Mostrar gráfica y mapa de Google Earth
 print("Generando gráfico de aeropuertos...")
-print("Generando archivo KML para Google Earth...")
+fig, ax = plt.subplots(figsize=(7, 6))
 PlotAirports(airports)   # Muestra gráfico de barras
+plt.tight_layout()
+plt.show()
+
+print("Generando archivo KML para Google Earth...")
 MapAirports(airports)    # Genera archivo KML para Google Earth
 
 print("\n--- Pruebas finalizadas ---")
