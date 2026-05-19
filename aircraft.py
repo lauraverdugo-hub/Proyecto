@@ -69,11 +69,6 @@ def LoadArrivals(filename):
         return []
     return aircrafts
 
-<<<<<<< HEAD
-def PlotArrivals(aircrafts, ax):
-=======
-import matplotlib.pyplot as plt
-
 """
     Genera una gráfica de llegadas por hora.
     Parámetros:
@@ -81,8 +76,7 @@ import matplotlib.pyplot as plt
     Resultado:
         Muestra un gráfico de barras con el número de aterrizajes por hora.
 """
-def PlotArrivals(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+def PlotArrivals(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -168,9 +162,6 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
-<<<<<<< HEAD
-def PlotAirlines(aircrafts, ax):
-=======
 """
     Genera una gráfica de vuelos por aerolínea.
     Parámetros:
@@ -178,8 +169,7 @@ def PlotAirlines(aircrafts, ax):
     Resultado:
         Muestra un gráfico de barras con la cantidad de vuelos por aerolínea.
 """
-def PlotAirlines(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+def PlotAirlines(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -203,7 +193,6 @@ def PlotAirlines(aircrafts):
     # Limpiar eje
     ax.clear()
 
-<<<<<<< HEAD
     # Estilo visual
     ax.set_facecolor("#ffffff")
 
@@ -214,13 +203,10 @@ def PlotAirlines(aircrafts):
     ax.set_xlabel('Airline (ICAO Code)')
     ax.set_ylabel('Number of Flights')
     ax.set_title('Flights per Airline arriving at LEBL')
-
     ax.tick_params(axis='x', rotation=90, labelsize=8)
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
-def PlotFlightsType(aircrafts, ax):
-=======
 """
     Genera una gráfica comparando vuelos Schengen y no Schengen.
     Parámetros:
@@ -228,8 +214,7 @@ def PlotFlightsType(aircrafts, ax):
     Resultado:
         Muestra una gráfica de barras apiladas.
     """
-def PlotFlightsType(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
+def PlotFlightsType(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -259,13 +244,11 @@ def PlotFlightsType(aircrafts):
 
     # Barras apiladas
     ax.bar(labels,s_data,label='Schengen',color='#87CEFA')
-
     ax.bar(labels,ns_data,bottom=s_data,label='No Schengen',color='#FF7F7F')
 
     # Configuración
     ax.set_ylabel('Count')
     ax.set_title('Schengen vs No-Schengen Arrivals')
-
     ax.grid(axis='y',linestyle='--',alpha=0.3)
     ax.legend()
 
@@ -465,7 +448,6 @@ if __name__ == "__main__":
         # =========================================================
 
         print("Generando archivo KML para Google Earth...")
-
         MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
 
     print("\n--- Pruebas finalizadas ---")
