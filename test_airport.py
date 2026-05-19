@@ -156,7 +156,7 @@ print("-----")
 # Mostrar gráfica y mapa de Google Earth
 print("Generando gráfico de aeropuertos...")
 fig, ax = plt.subplots(figsize=(7, 6))
-PlotAirports(airports)   # Muestra gráfico de barras
+PlotAirports(airports, ax) # Muestra gráfico de barras
 plt.tight_layout()
 plt.show()
 
