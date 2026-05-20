@@ -29,4 +29,4 @@ Además, al igual que en la versión anterior, al final se incluirá una secció
 - Asignar puertas de embarque a los vuelos de llegada
 - Visualizar la ocupación de las puertas de embarque (idealmente en forma de gráfico con la estructura del aeropuerto)
 
-Link a la demo de la V3:
+Link a la demo de la V3: https://youtu.be/BdrKllftA4Y
