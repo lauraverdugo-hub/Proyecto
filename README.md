@@ -1,6 +1,6 @@
 # GRUPO 3
 Miembros del equipo: Alex Martinez Valverde, Luca Romero Marcia, Laura Verdugo Muñoz
-
+![image alt](https://github.com/lauraverdugo-hub/Proyecto/blob/1a846f964df05c4af2f351f8f136ba739f68fa24/1000033472.webp)
 # Versión 1
 En esta primera versión nos centraremos en la manipulación de información sobre aeropuertos. Cada aeropuerto presenta información relevante (código ICAO, coordenadas y pertenencia al áera Schengen o no), que nos permitirá desarrollar funciones básicas. Entre estas seran cargar los aeropuertos desde un fichero, añadir y eliminar aeropuertos de esa lista, mostrar unos gráficos y mostrar la localización de cada aeropuerto en el Google Earth. Todas estas funciones se han designado en un fichero llamado airport.py. Seguidamente, se ha creado otro fichero llamado test_airport.py, el cual nos permite verificar que las funciones funcionan correctamente. Finalmente, se ha creado otro fichero llamado interface.py, donde se muestra una interfaz gráfica, desde la cual podemos probar todas las funciones implementadas en airport.py. De esta manera, en la interfaz gráfica podremos ver:
 - Cargar un fichero llamado airports.txt con todos los aeropuertos
