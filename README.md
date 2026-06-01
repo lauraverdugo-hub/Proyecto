@@ -2,8 +2,8 @@
 Miembros del equipo: Alex Martinez Valverde, Luca Romero Marcia, Laura Verdugo Muñoz
 
 <img src=https://github.com/lauraverdugo-hub/Proyecto/blob/1a846f964df05c4af2f351f8f136ba739f68fa24/1000033472.webp width="100" height="100">
-<img src=https://github.com/lauraverdugo-hub/Proyecto/blob/1a846f964df05c4af2f351f8f136ba739f68fa24/IMG_8128.jpeg width="100" height="100">
-<img src=https://github.com/lauraverdugo-hub/Proyecto/blob/4d12c4d082931b3d6bd5952f3fa75f1e748cf8c5/Captura%20de%20pantalla%202026-06-01%20214619.png width="100" height="100">
+<img src=https://github.com/lauraverdugo-hub/Proyecto/blob/1a846f964df05c4af2f351f8f136ba739f68fa24/IMG_8128.jpeg width="100" height="150">
+<img src=https://github.com/lauraverdugo-hub/Proyecto/blob/4d12c4d082931b3d6bd5952f3fa75f1e748cf8c5/Captura%20de%20pantalla%202026-06-01%20214619.png width="150" height="100">
 
 # Versión 1
 En esta primera versión, el desarrollo se centra en el almacenamiento y manipulación de información sobre aeropuertos. Cada aeropuerto cuenta con atributos clave como su código ICAO, coordenadas geográficas y su pertenencia o no al espacio Schengen. A partir de estos datos, se han implementado funciones básicas para cargar la lista de aeropuertos desde un archivo de texto (airports.txt), añadir o eliminar registros de aeropuertos de una lista, generar gráficos estadísticos y proyectar la localización exacta de cada aeropuerto en Google Earth mediante la generación de archivos KML.  
