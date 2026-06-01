@@ -2,6 +2,18 @@ from airport import IsSchengenAirport
 from LEBL import (AssignGate, SetGates, BoardingArea, Terminal, BarcelonaAP)
 import matplotlib.pyplot as plt
 
+"""
+    Representa una aeronave.
+    Atributos:
+        aircraft_id (str): Identificador de la aeronave.
+        airline_company (str): Código ICAO de la aerolínea.
+        origin_airport (str): Aeropuerto de origen.
+        landing_time (str): Hora de aterrizaje (HH:MM).
+        destination (str): Aeropuerto de destino.
+        departure_time (str): Hora de salida (HH:MM).
+    Resultado:
+        Crea una instancia de Aircraft.
+"""
 class Aircraft:
     def __init__(self, aircraft_id, airline_company, origin_airport, landing_time, destination, departure_time):
         self.aircraft_id = aircraft_id
@@ -13,6 +25,18 @@ class Aircraft:
 
 # -------- FUNCIONES V2 -------- #
 
+"""
+    Carga los vuelos de llegada desde un archivo de texto.
+    Parámetros:
+        filename (str): Ruta del archivo de llegadas.
+    Formato:
+        AIRCRAFT ORIGIN ARRIVAL AIRLINE
+    Resultado:
+        tuple:
+            - Lista de objetos Aircraft.
+            - None si no hay errores.
+            - -1 si el archivo no existe.
+"""
 def LoadArrivals(filename):
     aircrafts = []
     try:
@@ -41,8 +65,6 @@ def LoadArrivals(filename):
 
     return aircrafts, None
 
-<<<<<<< HEAD
-=======
 """
     Genera una gráfica de llegadas por hora.
     Parámetros:
@@ -50,7 +72,6 @@ def LoadArrivals(filename):
     Resultado:
         Muestra un gráfico de barras con el número de aterrizajes por hora.
 """
->>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotArrivals(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -89,6 +110,16 @@ def PlotArrivals(aircrafts, ax):
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
+"""
+    Guarda una lista de vuelos en un archivo de texto.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        filename (str): Nombre del archivo de salida.
+    Formato:
+        AIRCRAFT ORIGIN ARRIVAL AIRLINE
+    Resultado:
+        None si la operación se realiza correctamente. Devuelve un mensaje de error en caso contrario.
+"""
 def SaveFlights(aircrafts, filename):
     if not aircrafts:
         return "Error: Empty list" # Código de error
@@ -126,8 +157,6 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
-<<<<<<< HEAD
-=======
 """
     Genera una gráfica de vuelos por aerolínea.
     Parámetros:
@@ -135,7 +164,6 @@ def SaveFlights(aircrafts, filename):
     Resultado:
         Muestra un gráfico de barras con la cantidad de vuelos por aerolínea.
 """
->>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotAirlines(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -174,17 +202,13 @@ def PlotAirlines(aircrafts, ax):
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
-<<<<<<< HEAD
-
-=======
 """
     Genera una gráfica comparando vuelos Schengen y no Schengen.
     Parámetros:
         aircrafts (list): Lista de objetos Aircraft.
     Resultado:
         Muestra una gráfica de barras apiladas.
-    """
->>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
+"""
 def PlotFlightsType(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -223,6 +247,17 @@ def PlotFlightsType(aircrafts, ax):
     ax.grid(axis='y',linestyle='--',alpha=0.3)
     ax.legend()
 
+"""
+    Genera un archivo KML con las rutas de llegada a Barcelona.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        airports_dict (dict): Diccionario con coordenadas de aeropuertos.
+        filename (str): Nombre del archivo KML de salida.
+    Formato:
+        Cada vuelo se representa mediante una línea entre el aeropuerto de origen y el aeropuerto de Barcelona (LEBL).
+    Resultado:
+        Crea un archivo KML compatible con Google Earth.
+"""
 def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
     lebl_lat, lebl_lon = 41.297, 2.083  # Barcelona (LEBL)
 
@@ -270,6 +305,18 @@ def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
 
 import math
 
+"""
+    Calcula la distancia entre dos coordenadas geográficas.
+    Parámetros:
+        lat1 (float): Latitud del primer punto.
+        lon1 (float): Longitud del primer punto.
+        lat2 (float): Latitud del segundo punto.
+        lon2 (float): Longitud del segundo punto.
+    Formato:
+        Utiliza la fórmula de Haversine.
+    Resultado:
+        float: Distancia entre ambos puntos en kilómetros.
+"""
 def CalculateHaversine(lat1, lon1, lat2, lon2):
     # Calcula la distancia de círculo máximo entre dos puntos
     # Basado en el Anexo 2: Haversine Formula
@@ -289,6 +336,14 @@ def CalculateHaversine(lat1, lon1, lat2, lon2):
 
     return r * c
 
+"""
+    Obtiene los vuelos de larga distancia hacia Barcelona.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+        airports_dict (dict): Coordenadas de aeropuertos.
+    Resultado:
+        list: Aeronaves cuyo origen se encuentra a más de 2000 km de Barcelona.
+"""
 def LongDistanceArrivals(aircrafts, airports_dict):
     # Coordenadas de destino: Barcelona (LEBL)
     lebl_lat, lebl_lon = 41.297, 2.083
@@ -307,6 +362,18 @@ def LongDistanceArrivals(aircrafts, airports_dict):
 
 # -------- FUNCIONES V4 -------- #
 
+"""
+    Carga los vuelos de salida desde un archivo de texto.
+    Parámetros:
+        filename (str): Ruta del archivo de salidas.
+    Formato:
+        AIRCRAFT DESTINATION DEPARTURE AIRLINE
+    Resultado:
+        tuple:
+            - Lista de objetos Aircraft.
+            - None si no hay errores.
+            - -1 si el archivo no existe.
+"""
 def LoadDepartures(filename):
     aircrafts = []
     try:
@@ -335,6 +402,13 @@ def LoadDepartures(filename):
 
     return aircrafts, None
 
+"""
+    Convierte una hora en formato HH:MM a minutos.
+    Parámetros:
+        time_str (str): Hora en formato HH:MM.
+    Resultado:
+        int: Número total de minutos. Devuelve -1 si la cadena está vacía.
+"""
 def TimeToMinutes(time_str): # Función auxiliar para comprovar que el formato de las horas este bien
     if not time_str:
         return -1
@@ -342,6 +416,17 @@ def TimeToMinutes(time_str): # Función auxiliar para comprovar que el formato d
     h, m = time_str.split(":")
     return int(h) * 60 + int(m)
 
+"""
+    Combina las listas de llegadas y salidas.
+    Parámetros:
+        arrivals (list): Lista de llegadas.
+        departures (list): Lista de salidas.
+    Resultado:
+        tuple:
+            - Lista de movimientos combinados.
+            - None si no hay errores.
+            - -1 en caso de error.
+"""
 def MergeMovements(arrivals, departures):
     if arrivals is None or departures is None:
         return [], -1
@@ -359,6 +444,16 @@ def MergeMovements(arrivals, departures):
 
     return list(aircraft_dict.values()), None
 
+"""
+    Obtiene los aviones que permanecen en tierra durante la noche.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        tuple:
+            - Lista de aeronaves nocturnas.
+            - None si no hay errores.
+            - -1 si la lista está vacía.
+"""
 def NightAircraft(aircrafts):
     if not aircrafts:
         return [], -1
@@ -371,6 +466,15 @@ def NightAircraft(aircrafts):
 
     return night_list, None
 
+"""
+    Libera una puerta de embarque ocupada por una aeronave.
+    Parámetros:
+        bcn (BarcelonaAP): Aeropuerto de Barcelona.
+        aircraft_id (str): Identificador de la aeronave.
+    Resultado:
+        None si la puerta se libera correctamente. 
+        -1 si no se encuentra la aeronave.
+"""
 def FreeGate(bcn, aircraft_id):
     for terminal in bcn.terminals:
         for area in terminal.boarding_areas:
@@ -381,6 +485,15 @@ def FreeGate(bcn, aircraft_id):
                     return None
     return -1
 
+"""
+    Asigna puertas a los aviones nocturnos.
+    Parámetros:
+        bcn (BarcelonaAP): Aeropuerto de Barcelona.
+        aircrafts (list): Lista de aeronaves.
+    Resultado:
+        None si la asignación se realiza correctamente.
+        -1 si la lista está vacía.
+"""
 def AssignNightGates(bcn, aircrafts):
     if not aircrafts:
         return -1
@@ -391,13 +504,16 @@ def AssignNightGates(bcn, aircrafts):
 
     return None
 
-def TimeToMinutes(time_str): # Función auxiliar
-    if not time_str:
-        return -1
-
-    h, m = time_str.split(":")
-    return int(h) * 60 + int(m)
-
+"""
+    Gestiona la ocupación de puertas en una hora determinada.
+    Parámetros:
+        bcn (BarcelonaAP): Aeropuerto de Barcelona.
+        aircrafts (list): Lista de aeronaves.
+        time (str): Hora a simular (HH:MM).
+    Resultado:
+        int: Número de aeronaves que no han podido ser asignadas.
+        -1 si la lista está vacía.
+"""
 def AssignGatesAtTime(bcn, aircrafts, time):
     if not aircrafts:
         return -1
@@ -416,6 +532,14 @@ def AssignGatesAtTime(bcn, aircrafts, time):
 
     return not_assigned
 
+"""
+    Simula la ocupación de puertas durante un día completo.
+    Parámetros:
+        bcn (BarcelonaAP): Aeropuerto de Barcelona.
+        aircrafts (list): Lista de movimientos.
+    Resultado:
+        Genera una gráfica con la ocupación de puertas por terminal y el número de aeronaves no asignadas a lo largo del día.
+"""
 def PlotDayOccupancy(bcn, aircrafts):
     if not aircrafts:
         return -1
@@ -501,6 +625,9 @@ def PlotDayOccupancy(bcn, aircrafts):
 
 # ---------------- CREACIÓN DE AEROPUERTO (bcn) ---------------- #
 
+# Se crea la estructura principal del aeropuerto que será utilizada para la simulación de asignación de puertas.
+# El aeropuerto contiene terminales, áreas de embarque y puertas de embarque para vuelos Schengen y No Schengen.
+
 # =========================================================
 # CREAR AEROPUERTO BCN (LEBL)
 # =========================================================
@@ -510,6 +637,12 @@ bcn = BarcelonaAP("LEBL")
 # =========================================================
 # TERMINAL 1
 # =========================================================
+
+# Se crea la Terminal 1 y se asignan las aerolíneas que operan preferentemente en ella.
+# También se crean dos áreas de embarque:
+    - T1-S  : vuelos Schengen
+    - T1-NS : vuelos No Schengen
+# Finalmente se generan las puertas correspondientes y se añaden a la estructura del aeropuerto.
 
 t1 = Terminal("T1")
 # Aerolíneas (ejemplo típico V3/V4)
@@ -529,6 +662,9 @@ bcn.terminals.append(t1)
 # TERMINAL 2
 # =========================================================
 
+# Se crea la Terminal 2 con sus aerolíneas asociadas.
+# Se definen áreas de embarque para vuelos Schengen y No Schengen y se generan las puertas disponibles para cada tipo de operación.
+
 t2 = Terminal("T2")
 t2.airlines = ["AEE", "DLH", "AFR", "BAW"]
 # Boarding Areas
@@ -544,6 +680,20 @@ bcn.terminals.append(t2)
 
 # ---------------- TEST SECTION ---------------- #
 
+"""
+    Programa principal de simulación aeroportuaria.
+    Funcionalidades:
+        1. Cargar vuelos de llegada y salida.
+        2. Generar estadísticas y gráficos.
+        3. Combinar movimientos de aeronaves.
+        4. Configurar el aeropuerto de Barcelona (LEBL).
+        5. Asignar puertas a aeronaves nocturnas.
+        6. Simular la ocupación horaria de puertas.
+        7. Mostrar gráficos de ocupación.
+        8. Generar archivos KML para Google Earth.
+    Resultado:
+        Ejecuta una simulación completa de gestión de aeronaves y puertas de embarque en LEBL.
+"""
 if __name__ == "__main__":
 
     print("=== CARGA DE DATOS ===")
@@ -632,20 +782,12 @@ if __name__ == "__main__":
 
     print("Cargando gráfico de PlotDayOccupancy")
     PlotDayOccupancy(bcn, movements)
-
+    
     # =========================================================
-    # 8. FIN
+    # 8. GENERACIÓN KML
     # =========================================================
 
-<<<<<<< HEAD
+    print("Generando archivo KML para Google Earth...")
+    MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
+
     print("\n=== SIMULACIÓN FINALIZADA ===")
-=======
-        # =========================================================
-        # GENERACIÓN KML
-        # =========================================================
-
-        print("Generando archivo KML para Google Earth...")
-        MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
-
-    print("\n--- Pruebas finalizadas ---")
->>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
