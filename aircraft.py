@@ -1,88 +1,47 @@
 from airport import IsSchengenAirport
+from LEBL import (AssignGate, SetGates, BoardingArea, Terminal, BarcelonaAP)
 import matplotlib.pyplot as plt
 
-"""
-   Módulo de gestión de vuelos y llegadas de aeronaves.
-   Funciones principales:
-    1. Cargar vuelos desde un archivo.
-    2. Mostrar estadísticas de llegadas.
-    3. Guardar vuelos en archivos.
-    4. Generar gráficas con matplotlib.
-    5. Crear mapas KML para Google Earth.
-    6. Calcular distancias mediante la fórmula de Haversine.
-    7. Filtrar vuelos de larga distancia.
-"""
-
-"""
-    Clase que representa una aeronave.
-    Atributos:
-        aircraft_id : str
-             Identificador o matrícula de la aeronave.
-        airline_company : str
-             Código ICAO de la aerolínea.
-        origin_airport : str
-             Código ICAO del aeropuerto de origen.
-        landing_time : str
-             Hora de llegada en formato hh:mm.
-    Resultado:
-        Crea un objeto Aircraft con todos sus atributos.
-"""
 class Aircraft:
-    def __init__(self, aircraft_id, airline_company, origin_airport, landing_time):
+    def __init__(self, aircraft_id, airline_company, origin_airport, landing_time, destination, departure_time):
         self.aircraft_id = aircraft_id
         self.origin_airport = origin_airport
         self.landing_time = landing_time
         self.airline_company = airline_company
+        self.destination = destination
+        self.departure_time = departure_time
 
-"""
-    Carga vuelos desde un archivo de texto.
-    Parámetros:
-         filename (str): Nombre del archivo de entrada.
-    Formato del archivo:
-         AIRCRAFT ORIGIN ARRIVAL AIRLINE
-         AEA123 LEBL 10:30 IBE
-    Resultado:
-         list: Lista de objetos Aircraft. Devuelve [] si el archivo no existe.
-"""
+# -------- FUNCIONES V2 -------- #
+
 def LoadArrivals(filename):
-    aircrafts = [] # Abre el archivo y devuelve una lista de Aircraft
+    aircrafts = []
     try:
-        with open(filename, "r") as F: # Abre archivo y se cierra automáticamente
-            next(F) # Saltar encabezado: AIRCRAFT ORIGIN ARRIVAL AIRLINE
+        with open(filename, "r") as F:
+            next(F)
             for line in F:
                 parts = line.strip().split()
-                if len(parts) == 4:
-                    aircraft_id = parts[0]
-                    origin = parts[1]
-                    arrival_time = parts[2]
-                    airline = parts[3]
-
-                    # Validación del formato de tiempo (hh:mm)
-                    if len(parts) == 4:
-                        if ":" in arrival_time:
-                            # Intentamos dividir el tiempo para asegurar que son números reales
-                            h_m = arrival_time.split(":") # Separamos la hora en dos partes
-                            if h_m[0].isdigit() and h_m[1].isdigit(): # .isdigit() comprueba que sean números reales
-                                new_aircraft = Aircraft(aircraft_id, airline, origin, arrival_time)
-                                aircrafts.append(new_aircraft)
+                if len(parts) != 4:
+                    continue
+                aircraft_id, origin, arrival_time, airline = parts
+                if ":" in arrival_time:
+                    h_m = arrival_time.split(":")
+                    if h_m[0].isdigit() and h_m[1].isdigit():
+                        aircrafts.append(
+                            Aircraft(
+                                aircraft_id,
+                                airline,
+                                origin,
+                                arrival_time,
+                                "",
+                                ""
+                            )
+                        )
     except FileNotFoundError:
-        return []
-    return aircrafts
+        return [], -1
 
-<<<<<<< HEAD
+    return aircrafts, None
+
 def PlotArrivals(aircrafts, ax):
-=======
-import matplotlib.pyplot as plt
-
-"""
-    Genera una gráfica de llegadas por hora.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-    Resultado:
-        Muestra un gráfico de barras con el número de aterrizajes por hora.
-"""
-def PlotArrivals(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -117,20 +76,9 @@ def PlotArrivals(aircrafts):
     ax.set_xlabel('Hour of the Day')
     ax.set_ylabel('Number of Landings')
     ax.set_title('Landing Frequency at Barcelona El Prat (LEBL)')
-
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
-"""
-    Guarda vuelos en un archivo de texto.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-        filename (str): Nombre del archivo de salida.
-    Formato:
-        Campos vacíos se sustituyen por "-" o "0".
-    Resultado:
-        Genera un archivo con los vuelos. Devuelve un mensaje de error si ocurre un problema.
-"""
 def SaveFlights(aircrafts, filename):
     if not aircrafts:
         return "Error: Empty list" # Código de error
@@ -168,18 +116,7 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
-<<<<<<< HEAD
 def PlotAirlines(aircrafts, ax):
-=======
-"""
-    Genera una gráfica de vuelos por aerolínea.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-    Resultado:
-        Muestra un gráfico de barras con la cantidad de vuelos por aerolínea.
-"""
-def PlotAirlines(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -203,7 +140,6 @@ def PlotAirlines(aircrafts):
     # Limpiar eje
     ax.clear()
 
-<<<<<<< HEAD
     # Estilo visual
     ax.set_facecolor("#ffffff")
 
@@ -214,22 +150,12 @@ def PlotAirlines(aircrafts):
     ax.set_xlabel('Airline (ICAO Code)')
     ax.set_ylabel('Number of Flights')
     ax.set_title('Flights per Airline arriving at LEBL')
-
     ax.tick_params(axis='x', rotation=90, labelsize=8)
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
+
 def PlotFlightsType(aircrafts, ax):
-=======
-"""
-    Genera una gráfica comparando vuelos Schengen y no Schengen.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-    Resultado:
-        Muestra una gráfica de barras apiladas.
-    """
-def PlotFlightsType(aircrafts):
->>>>>>> ffaaecd455fc3543e55a48b559ac0012e4773e8a
     if not aircrafts:
         print("Error: The aircraft list is empty.")
         return
@@ -265,37 +191,30 @@ def PlotFlightsType(aircrafts):
     # Configuración
     ax.set_ylabel('Count')
     ax.set_title('Schengen vs No-Schengen Arrivals')
-
     ax.grid(axis='y',linestyle='--',alpha=0.3)
     ax.legend()
 
-"""
-    Genera un archivo KML con trayectorias de vuelo.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-        airports_dict (dict): Diccionario con aeropuertos y coordenadas.
-        filename (str): Nombre del archivo KML de salida.
-    Resultado:
-        Crea un archivo KML compatible con Google Earth.
-    """
 def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
-    lebl_lat, lebl_lon = 41.297, 2.083 # Definimos las coordenadas del aeropuerto LEBL
-    # Genera un archivo KML para ver las rutas aéreas en Google Earth
+    lebl_lat, lebl_lon = 41.297, 2.083  # Barcelona (LEBL)
+
     try:
-        F = open(filename, "w")
-        F.write("""<?xml version="1.0" encoding="UTF-8"?>
+        with open(filename, "w", encoding="utf-8") as F:
+            F.write("""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
     <name>Trayectorias de Vuelo a LEBL</name>
 """)
-        j = 0
-        while j < len(aircrafts):
-            a = aircrafts[j]
-            if a.origin_airport in airports_dict: # Verifica si su aeropuerto de origen existe en el diccionario de aeropuertos proporcionado
-                apt = airports_dict[a.origin_airport] # Si existe, extrae el objeto del aeropuerto para obtener su latitud y longitud
-                # Color KML:(Schengen=Azul, No-Schengen=Rojo)
-                color = "ffff0000" if IsSchengenAirport(a.origin_airport) else "ff0000ff"
-                F.write(f"""
+            j = 0
+            while j < len(aircrafts):
+                a = aircrafts[j]
+                if a.origin_airport in airports_dict:
+                    apt = airports_dict[a.origin_airport]
+                    # ✔ adaptado a diccionario (NO objeto)
+                    lat = apt["latitude"]
+                    lon = apt["longitude"]
+                    # Color KML: Schengen / No-Schengen
+                    color = "ffff0000" if IsSchengenAirport(a.origin_airport) else "ff0000ff"
+                    F.write(f"""
     <Placemark>
         <name>{a.aircraft_id} desde {a.origin_airport}</name>
         <Style>
@@ -307,32 +226,21 @@ def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
         <LineString>
             <tessellate>1</tessellate>
             <coordinates>
-                {apt.longitude},{apt.latitude},0
+                {lon},{lat},0
                 {lebl_lon},{lebl_lat},0
             </coordinates>
         </LineString>
     </Placemark>
 """)
-            j += 1
-        # Cierre KML
-        F.write("</Document>\n</kml>")
-        F.close()
+                j += 1
+            F.write("</Document>\n</kml>")
         print(f"Mapa generado: {filename}")
+        return None
     except Exception:
         return "Error: Could not write KML file"
 
-    return None
-
 import math
 
-"""
-    Calcula la distancia entre dos puntos geográficos usando la fórmula de Haversine.
-    Parámetros:
-        lat1, lon1: Coordenadas del punto 1 (grados).
-        lat2, lon2: Coordenadas del punto 2 (grados).
-    Resultado:
-        float: Distancia en kilómetros entre ambos puntos.
-    """
 def CalculateHaversine(lat1, lon1, lat2, lon2):
     # Calcula la distancia de círculo máximo entre dos puntos
     # Basado en el Anexo 2: Haversine Formula
@@ -352,14 +260,6 @@ def CalculateHaversine(lat1, lon1, lat2, lon2):
 
     return r * c
 
-"""
-    Filtra vuelos de larga distancia.
-    Parámetros:
-        aircrafts (list): Lista de objetos Aircraft.
-        airports_dict (dict): Diccionario con información de aeropuertos.
-    Resultado:
-        list: Lista de vuelos cuya distancia a Barcelona supera los 2000 km.
-"""
 def LongDistanceArrivals(aircrafts, airports_dict):
     # Coordenadas de destino: Barcelona (LEBL)
     lebl_lat, lebl_lon = 41.297, 2.083
@@ -376,96 +276,336 @@ def LongDistanceArrivals(aircrafts, airports_dict):
         j += 1
     return long_distance_list
 
-# ---------------- TEST SECTION ---------------- #
+# -------- FUNCIONES V4 -------- #
 
-"""
-   Bloque principal de pruebas.
-   Funciones comprobadas:
-    1. Carga de vuelos.
-    2. Generación de gráficas.
-    3. Guardado de archivos.
-    4. Clasificación Schengen.
-    5. Filtrado de larga distancia.
-    6. Generación de mapas KML.
-"""
+def LoadDepartures(filename):
+    aircrafts = []
+    try:
+        with open(filename, "r") as F:
+            next(F)
+            for line in F:
+                parts = line.strip().split()
+                if len(parts) != 4:
+                    continue
+                aircraft_id, destination, departure_time, airline = parts
+                if ":" in departure_time:
+                    h_m = departure_time.split(":")
+                    if h_m[0].isdigit() and h_m[1].isdigit():
+                        aircrafts.append(
+                            Aircraft(
+                                aircraft_id,
+                                airline,
+                                "",
+                                "",
+                                destination,
+                                departure_time
+                            )
+                        )
+    except FileNotFoundError:
+        return [], -1
+
+    return aircrafts, None
+
+def TimeToMinutes(time_str): # Función auxiliar para comprovar que el formato de las horas este bien
+    if not time_str:
+        return -1
+
+    h, m = time_str.split(":")
+    return int(h) * 60 + int(m)
+
+def MergeMovements(arrivals, departures):
+    if arrivals is None or departures is None:
+        return [], -1
+
+    aircraft_dict = {}
+    for ac in arrivals:
+        aircraft_dict[ac.aircraft_id] = ac
+    for dep in departures:
+        if dep.aircraft_id in aircraft_dict:
+            arr = aircraft_dict[dep.aircraft_id]
+            arr.destination = dep.destination
+            arr.departure_time = dep.departure_time
+        else:
+            aircraft_dict[dep.aircraft_id] = dep
+
+    return list(aircraft_dict.values()), None
+
+def NightAircraft(aircrafts):
+    if not aircrafts:
+        return [], -1
+
+    night_list = []
+    for ac in aircrafts:
+        # Avión nocturno: no tiene llegada pero sí salida
+        if ac.landing_time == "" and ac.departure_time != "":
+            night_list.append(ac)
+
+    return night_list, None
+
+def FreeGate(bcn, aircraft_id):
+    for terminal in bcn.terminals:
+        for area in terminal.boarding_areas:
+            for gate in area.gates:
+                if gate.aircraft_id == aircraft_id:
+                    gate.occupied = False
+                    gate.aircraft_id = ""
+                    return None
+    return -1
+
+def AssignNightGates(bcn, aircrafts):
+    if not aircrafts:
+        return -1
+
+    for aircraft in aircrafts:
+        if (aircraft.landing_time == "" and aircraft.departure_time != ""):
+            AssignGate(bcn, aircraft)
+
+    return None
+
+def TimeToMinutes(time_str): # Función auxiliar
+    if not time_str:
+        return -1
+
+    h, m = time_str.split(":")
+    return int(h) * 60 + int(m)
+
+def AssignGatesAtTime(bcn, aircrafts, time):
+    if not aircrafts:
+        return -1
+
+    hour = int(time.split(":")[0])
+    not_assigned = 0
+    for ac in aircrafts:
+        if ac.departure_time:
+            if int(ac.departure_time.split(":")[0]) == hour:
+                FreeGate(bcn, ac.aircraft_id)
+    for ac in aircrafts:
+        if ac.landing_time:
+            if int(ac.landing_time.split(":")[0]) == hour:
+                if AssignGate(bcn, ac) == -1:
+                    not_assigned += 1
+
+    return not_assigned
+
+def PlotDayOccupancy(bcn, aircrafts):
+    if not aircrafts:
+        return -1
+
+    # ----------------------------------
+    # Reiniciar estado del aeropuerto
+    # ----------------------------------
+
+    for terminal in bcn.terminals:
+        for area in terminal.boarding_areas:
+            for gate in area.gates:
+                gate.occupied = False
+                gate.aircraft_id = ""
+
+    # ----------------------------------
+    # Asignar night aircraft
+    # ----------------------------------
+
+    night_aircraft, error = NightAircraft(aircrafts)
+    if error != -1:
+        AssignNightGates(bcn,night_aircraft)
+
+    # ----------------------------------
+    # Preparar estructuras de datos
+    # ----------------------------------
+
+    terminal_data = {}
+    for terminal in bcn.terminals:
+        terminal_data[terminal.name] = []
+    hours = []
+    unassigned = []
+
+    # ----------------------------------
+    # Simulación hora a hora
+    # ----------------------------------
+
+    for hour in range(24):
+        current_time = f"{hour:02d}:00"
+        failed = AssignGatesAtTime(bcn,aircrafts,current_time)
+        hours.append(hour)
+        unassigned.append(failed)
+
+        # Contar puertas ocupadas
+        for terminal in bcn.terminals:
+            occupied = 0
+            for area in terminal.boarding_areas:
+                for gate in area.gates:
+                    if gate.occupied:
+                        occupied += 1
+            terminal_data[terminal.name].append(occupied)
+
+    # ----------------------------------
+    # Crear gráfica
+    # ----------------------------------
+
+    plt.figure(figsize=(12, 6))
+    for terminal_name in terminal_data:
+        plt.plot(
+            hours,
+            terminal_data[terminal_name],
+            marker="o",
+            linewidth=2,
+            label=f"Terminal {terminal_name}"
+        )
+    plt.plot(
+        hours,
+        unassigned,
+        color="red",
+        marker="s",
+        linewidth=3,
+        label="Aircraft not assigned"
+    )
+    plt.xlabel("Hour of Day")
+    plt.ylabel("Number of Aircraft")
+    plt.title("LEBL Gate Occupancy Throughout the Day")
+    plt.xticks(range(24))
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+    return None
+
+# ---------------- CREACIÓN DE AEROPUERTO (bcn) ---------------- #
+
+# =========================================================
+# CREAR AEROPUERTO BCN (LEBL)
+# =========================================================
+
+bcn = BarcelonaAP("LEBL")
+
+# =========================================================
+# TERMINAL 1
+# =========================================================
+
+t1 = Terminal("T1")
+# Aerolíneas (ejemplo típico V3/V4)
+t1.airlines = ["VLG", "IBE", "RYR", "EZY"]
+# Boarding Areas
+t1_schengen = BoardingArea("T1-S", "Schengen")
+t1_non_schengen = BoardingArea("T1-NS", "non-Schengen")
+# Puertas Schengen
+SetGates(t1_schengen, 1, 10, "T1S")
+# Puertas No-Schengen
+SetGates(t1_non_schengen, 1, 5, "T1NS")
+t1.boarding_areas.append(t1_schengen)
+t1.boarding_areas.append(t1_non_schengen)
+bcn.terminals.append(t1)
+
+# =========================================================
+# TERMINAL 2
+# =========================================================
+
+t2 = Terminal("T2")
+t2.airlines = ["AEE", "DLH", "AFR", "BAW"]
+# Boarding Areas
+t2_schengen = BoardingArea("T2-S", "Schengen")
+t2_non_schengen = BoardingArea("T2-NS", "non-Schengen")
+# Puertas Schengen
+SetGates(t2_schengen, 11, 18, "T2S")
+# Puertas No-Schengen
+SetGates(t2_non_schengen, 6, 10, "T2NS")
+t2.boarding_areas.append(t2_schengen)
+t2.boarding_areas.append(t2_non_schengen)
+bcn.terminals.append(t2)
+
+# ---------------- TEST SECTION ---------------- #
 
 if __name__ == "__main__":
 
-    # 1. Cargamos los datos del archivo
-    archivo_entrada = "arrivals.txt"
-    lista_vuelos = LoadArrivals(archivo_entrada)
-    if not lista_vuelos:
-        print(f"Error: No se pudo cargar el archivo {archivo_entrada} o está vacío.")
+    print("=== CARGA DE DATOS ===")
+
+    # =========================================================
+    # 1. CARGA DE ARRIVALS Y DEPARTURES
+    # =========================================================
+
+    arrivals, err1 = LoadArrivals("arrivals.txt")
+    departures, err2 = LoadDepartures("departures.txt")
+    if err1 == -1 or err2 == -1:
+        print("Error cargando archivos")
+        exit()
     else:
-        print(f"Se han cargado {len(lista_vuelos)} vuelos con éxito.")
+        print(f"Arrivals: {len(arrivals)} | Departures: {len(departures)}")
 
-        # =========================================================
-        # PRUEBA 1 - GRÁFICO DE LLEGADAS POR HORA
-        # =========================================================
+    # =========================================================
+    # 2. GRÁFICOS V2
+    # =========================================================
 
-        print("Generando gráfico de llegadas por hora...")
-        fig1, ax1 = plt.subplots(figsize=(10, 6))
-        PlotArrivals(lista_vuelos, ax1)
-        plt.show()
+    print("\n=== GRÁFICOS V2 ===")
+    fig1, ax1 = plt.subplots(figsize=(10, 6))
+    PlotArrivals(arrivals, ax1)
+    plt.show()
+    fig2, ax2 = plt.subplots(figsize=(12, 6))
+    PlotAirlines(arrivals, ax2)
+    plt.show()
+    fig3, ax3 = plt.subplots(figsize=(9, 6))
+    PlotFlightsType(arrivals, ax3)
+    plt.show()
+    airports_dict = {
+        "MAD": {"latitude": 40.49, "longitude": -3.56},
+        "LHR": {"latitude": 51.47, "longitude": -0.45},
+        "JFK": {"latitude": 40.64, "longitude": -73.77},
+        "CDG": {"latitude": 49.01, "longitude": 2.55},
+        "FRA": {"latitude": 50.03, "longitude": 8.56},
+        "AMS": {"latitude": 52.31, "longitude": 4.76},
+        "BCN": {"latitude": 41.297, "longitude": 2.083},  # Barcelona
+        "FCO": {"latitude": 41.80, "longitude": 12.25},
+        "IST": {"latitude": 41.27, "longitude": 28.73},
+        "DXB": {"latitude": 25.25, "longitude": 55.36}
+    }
+    MapFlights(arrivals, airports_dict)
 
-        # =========================================================
-        # PRUEBA 2 - GRÁFICO POR AEROLÍNEA
-        # =========================================================
+    # =========================================================
+    # 3. MERGE MOVIMIENTOS (V4 CORE)
+    # =========================================================
 
-        print("Generando gráfico de vuelos por aerolínea...")
-        fig2, ax2 = plt.subplots(figsize=(12, 6))
-        PlotAirlines(lista_vuelos, ax2)
-        plt.show()
+    print("\n=== MERGE MOVEMENTS ===")
+    movements, err3 = MergeMovements(arrivals, departures)
+    if err3 == -1:
+        print("Error en MergeMovements")
+        exit()
+    print(f"Movimientos totales: {len(movements)}")
 
-        # =========================================================
-        # GUARDADO DE VUELOS
-        # =========================================================
+    # =========================================================
+    # 4. CREAR AEROPUERTO BCN
+    # =========================================================
 
-        archivo_salida = "arrivals_saved.txt"
-        error_save = SaveFlights(lista_vuelos, archivo_salida)
-        if error_save:
-            print(error_save)
-        else:
-            print(f"Archivo guardado correctamente como: {archivo_salida}")
+    print("\n=== CONFIGURANDO AEROPUERTO BCN ===")
 
-        # =========================================================
-        # DATOS DE PRUEBA PARA AEROPUERTOS
-        # =========================================================
+    # =========================================================
+    # 5. NIGHT AIRCRAFT
+    # =========================================================
 
-        class MockAirport:
-            def __init__(self, lat, lon):
-                self.latitude = lat
-                self.longitude = lon
+    night, err4 = NightAircraft(movements)
+    if err4 == -1:
+        print("Error NightAircraft")
+        exit()
+    for ac in night:
+        AssignGate(bcn, ac)
 
-        test_airports = {
-            "MAD": MockAirport(40.49, -3.56),
-            "JFK": MockAirport(40.64, -73.77),
-            "LHR": MockAirport(51.47, -0.45)
-        }
+    # =========================================================
+    # 6. SIMULACIÓN HORARIA V4
+    # =========================================================
 
-        # =========================================================
-        # FILTRADO DE VUELOS LARGOS
-        # =========================================================
+    print("\n=== SIMULACIÓN V4 ===")
+    for h in range(24):
+        time = f"{h:02d}:00"
+        not_assigned = AssignGatesAtTime(bcn, movements, time)
+        print(f"{time} → No asignados: {not_assigned}")
 
-        print("Filtrando vuelos de larga distancia (>2000km)...")
-        vuelos_largos = LongDistanceArrivals(lista_vuelos,test_airports)
-        print(f"Vuelos de larga distancia encontrados: {len(vuelos_largos)}")
+    # =========================================================
+    # 7. GRÁFICO FINAL V4
+    # =========================================================
 
-        # =========================================================
-        # PRUEBA 3 - SCHENGEN VS NO SCHENGEN
-        # =========================================================
+    print("Cargando gráfico de PlotDayOccupancy")
+    PlotDayOccupancy(bcn, movements)
 
-        print("Generando gráfico Schengen vs No-Schengen...")
-        fig3, ax3 = plt.subplots(figsize=(9, 6))
-        PlotFlightsType(lista_vuelos, ax3)
-        plt.show()
+    # =========================================================
+    # 8. FIN
+    # =========================================================
 
-        # =========================================================
-        # GENERACIÓN KML
-        # =========================================================
-
-        print("Generando archivo KML para Google Earth...")
-
-        MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
-
-    print("\n--- Pruebas finalizadas ---")
+    print("\n=== SIMULACIÓN FINALIZADA ===")

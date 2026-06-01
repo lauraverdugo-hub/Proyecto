@@ -155,7 +155,7 @@ def AssignGate(bcn, aircraft):
                             return None  # Éxito
     return -1  # No hay puertas disponibles
 
-# --- GRÁFICO APILADO REQUERIDO PARA LA INTERFAZ ---
+# --- GRÁFICO APILADO REQUERIDO PARA LA INTERFAZ --- #
 
 def PlotOccupancyChart(bcn, target_frame=None, airline_filter=None):
     areas_names = []
