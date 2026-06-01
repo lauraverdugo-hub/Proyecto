@@ -41,6 +41,16 @@ def LoadArrivals(filename):
 
     return aircrafts, None
 
+<<<<<<< HEAD
+=======
+"""
+    Genera una gráfica de llegadas por hora.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra un gráfico de barras con el número de aterrizajes por hora.
+"""
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotArrivals(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -116,6 +126,16 @@ def SaveFlights(aircrafts, filename):
 
     return None  # En caso de no haver error devuelve None (operación completada con éxito)
 
+<<<<<<< HEAD
+=======
+"""
+    Genera una gráfica de vuelos por aerolínea.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra un gráfico de barras con la cantidad de vuelos por aerolínea.
+"""
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotAirlines(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -154,7 +174,17 @@ def PlotAirlines(aircrafts, ax):
     ax.grid(axis='y',linestyle='--',alpha=0.5)
     ax.legend()
 
+<<<<<<< HEAD
 
+=======
+"""
+    Genera una gráfica comparando vuelos Schengen y no Schengen.
+    Parámetros:
+        aircrafts (list): Lista de objetos Aircraft.
+    Resultado:
+        Muestra una gráfica de barras apiladas.
+    """
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotFlightsType(aircrafts, ax):
     if not aircrafts:
         print("Error: The aircraft list is empty.")
@@ -185,7 +215,6 @@ def PlotFlightsType(aircrafts, ax):
 
     # Barras apiladas
     ax.bar(labels,s_data,label='Schengen',color='#87CEFA')
-
     ax.bar(labels,ns_data,bottom=s_data,label='No Schengen',color='#FF7F7F')
 
     # Configuración
@@ -608,4 +637,15 @@ if __name__ == "__main__":
     # 8. FIN
     # =========================================================
 
+<<<<<<< HEAD
     print("\n=== SIMULACIÓN FINALIZADA ===")
+=======
+        # =========================================================
+        # GENERACIÓN KML
+        # =========================================================
+
+        print("Generando archivo KML para Google Earth...")
+        MapFlights(lista_vuelos,test_airports,"vuelos_barcelona.kml")
+
+    print("\n--- Pruebas finalizadas ---")
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6

@@ -71,6 +71,16 @@ def CoordToString(decimal, is_lat):
     else:
         return "{}{:03d}{:02d}{:02d}".format(direction, deg, min_, sec)
 
+<<<<<<< HEAD
+=======
+"""
+    Crea una lista de objetos Airport a partir de un archivo de texto.
+    Parámetros:
+        filename (str): Ruta del archivo (formato: ICAO LAT LON).
+    Resultado:
+        list: Lista de objetos Airport. Si hay error, devuelve la lista vacía.
+"""
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def LoadAirports(filename):
     airports = []
     try:
@@ -150,6 +160,16 @@ def RemoveAirport(airports, code):
         i += 1
     return "Error in the code" # código de error
 
+<<<<<<< HEAD
+=======
+"""
+    Genera y muestra un gráfico de barras comparando aeropuertos Schengen vs No Schengen.
+    Parámetros:
+        airports (list): Lista de objetos Airport.
+    Resultado:
+        Genera una gráfica de barras apiladas utilizando matplotlib.
+"""
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def PlotAirports(airports, ax):
 # Muestra un gráfico de barras apiladas con aeropuertos Schengen y no Schengen.
     schengen_count = 0
@@ -183,6 +203,19 @@ def PlotAirports(airports, ax):
     # Grid suave opcional
     ax.grid(axis='y',linestyle='--',alpha=0.3)
 
+<<<<<<< HEAD
+=======
+"""
+    Genera un archivo KML para visualizar aeropuertos en Google Earth.
+    Parámetros:
+        airports (list): Lista de objetos Airport.
+        filename (str): Nombre del archivo .kml resultante (por defecto "airports.kml").
+    Formato:
+        Exporta latitud, longitud y color (Azul=No Schengen, Rojo=Schengen) al archivo.
+    Resultado:
+        Crea un archivo KML con marcadores de aeropuertos. Los aeropuertos Schengen aparecen en un color diferente.
+"""
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
 def MapAirports(airports, filename = "airports.kml"):
 # Genera un archivo KML para ver los aeropuertos en Google Earth.
 # Schengen -> azul, No Schengen -> rojo
@@ -217,4 +250,8 @@ def MapAirports(airports, filename = "airports.kml"):
 </kml>
 """)
    F.close()
+<<<<<<< HEAD
    print(f"Archivo {filename} creado. Ábrelo con Google Earth.")
+=======
+   print(f"Archivo {filename} creado. Ábrelo con Google Earth.")
+>>>>>>> 8ca15a8046b32c0f294278d29e336e17f94900e6
