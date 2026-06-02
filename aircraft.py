@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
         landing_time (str): Hora de aterrizaje.
         destination (str): Aeropuerto de destino.
         departure_time (str): Hora de despegue.
-    """
+"""
 class Aircraft:
   def __init__(self, aircraft_id, airline_company, origin_airport, landing_time, destination, departure_time):
       self.aircraft_id = aircraft_id
@@ -36,9 +36,8 @@ class Aircraft:
     Resultado:
         int: Número de minutos desde el inicio del día.
              Devuelve -1 si el formato es inválido.
-    """
+"""
 def TimeToMinutes(time_str):
-  """ Convierte formato hh:mm a minutos totales desde el inicio del día. """
   if not time_str or ":" not in time_str:
       return -1
   try:
@@ -58,7 +57,7 @@ def TimeToMinutes(time_str):
     Resultado:
         tuple: (lista_de_aviones, error).
                Devuelve -1 como error si el fichero no existe.
-    """
+"""
 def LoadArrivals(filename):
   aircrafts = []
   try:
@@ -86,7 +85,7 @@ def LoadArrivals(filename):
         ax (matplotlib.axes.Axes): Eje donde se dibuja la gráfica.
     Resultado:
         None
-    """
+"""
 def PlotArrivals(aircrafts, ax):
   if not aircrafts:
       print("Error: The aircraft list is empty.")
@@ -117,7 +116,7 @@ def PlotArrivals(aircrafts, ax):
         filename (str): Nombre o ruta del fichero de salida.
     Resultado:
         str | None: Mensaje de error si ocurre un problema, o None si se guarda correctamente.
-    """
+"""
 def SaveFlights(aircrafts, filename):
   if not aircrafts:
       return "Error: Empty list"
@@ -141,7 +140,7 @@ def SaveFlights(aircrafts, filename):
         ax (matplotlib.axes.Axes): Eje donde se dibuja la gráfica.
     Resultado:
         None
-    """
+"""
 def PlotAirlines(aircrafts, ax):
   if not aircrafts:
       print("Error: The aircraft list is empty.")
@@ -170,7 +169,7 @@ def PlotAirlines(aircrafts, ax):
         ax (matplotlib.axes.Axes): Eje donde se dibuja la gráfica.
     Resultado:
         None
-    """
+"""
 def PlotFlightsType(aircrafts, ax):
   if not aircrafts:
       print("Error: The aircraft list is empty.")
@@ -195,7 +194,7 @@ def PlotFlightsType(aircrafts, ax):
         filename (str): Nombre del fichero KML de salida.
     Resultado:
         str | None: Mensaje de error si falla la escritura o None si se genera correctamente.
-    """
+"""
 def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
   lebl_lat, lebl_lon = 41.297, 2.083
   try:
@@ -230,9 +229,8 @@ def MapFlights(aircrafts, airports_dict, filename="flights.kml"):
     Resultado:
         tuple: (lista_de_aviones, error).
                Devuelve -1 como error si el fichero no existe.
-    """
+"""
 def LoadDepartures(filename):
-  """ Carga los datos de despegue y gestiona errores de lectura de fichero. """
   aircrafts = []
   try:
       with open(filename, "r") as F:
@@ -261,9 +259,8 @@ def LoadDepartures(filename):
     Resultado:
         tuple: (lista_combinada, error).
                Devuelve -1 si alguna de las listas está vacía.
-    """
+"""
 def MergeMovements(arrivals, departures):
-  """ Combina arribos y partidas validando compatibilidad horaria y aviones repetidos. """
   if not arrivals or not departures:
       return [], -1
 
@@ -298,9 +295,8 @@ def MergeMovements(arrivals, departures):
     Resultado:
         tuple: (lista_de_aviones_nocturnos, error).
                Devuelve -1 si la lista está vacía.
-    """
+"""
 def NightAircraft(aircrafts):
-  """ Detecta aviones que pasaron la noche en el aeropuerto (solo tienen despegue). """
   if not aircrafts:
       return [], -1
   night_list = [ac for ac in aircrafts if ac.landing_time == "" and ac.departure_time != ""]
@@ -313,9 +309,8 @@ def NightAircraft(aircrafts):
         aircraft_id (str): Matrícula o identificador del avión.
     Resultado:
         int | None: Devuelve -1 si el avión no se encuentra, o None si la liberación es correcta.
-    """
+"""
 def FreeGate(bcn, aircraft_id):
-  """ Libera la puerta asignada a una matrícula específica. """
   for terminal in bcn.terminals:
       for area in terminal.boarding_areas:
           for gate in area.gates:
@@ -332,9 +327,8 @@ def FreeGate(bcn, aircraft_id):
         aircrafts (list): Lista de objetos Aircraft.
     Resultado:
         int | None: Devuelve -1 si la lista está vacía, o None si la asignación finaliza correctamente.
-    """
+"""
 def AssignNightGates(bcn, aircrafts):
-  """ Asigna pasarela a los aviones estacionados desde la noche anterior. """
   if not aircrafts:
       return -1
   for ac in aircrafts:
@@ -350,7 +344,7 @@ def AssignNightGates(bcn, aircrafts):
         time (str): Hora de simulación en formato hh:mm.
     Resultado:
         int: Número de aviones que no pudieron recibir puerta de embarque.
-    """
+"""
 def AssignGatesAtTime(bcn, aircrafts, time):
   if not aircrafts:
       return -1
@@ -383,7 +377,7 @@ def AssignGatesAtTime(bcn, aircrafts, time):
         aircrafts (list): Lista de objetos Aircraft.
     Resultado:
         int | None: Devuelve -1 si la lista está vacía, o None al finalizar la simulación.
-    """
+"""
 def PlotDayOccupancy(bcn, aircrafts):
   if not aircrafts:
       return -1
