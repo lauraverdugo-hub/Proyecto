@@ -53,4 +53,4 @@ El núcleo del programa (LEBL.py) se rediseña por completo para pasar de un mod
 - Simular el paso del tiempo, asignando puertas de embarque de manera dinámica hora por hora.
 - Generar gráficos de ocupación por terminal para ver cuántas puertas se usan cada hora y cuántos vuelos se han quedado sin puerta debido a la ocupación del aeropuerto.
 
-Link a la demo de la V4:
+Link a la demo de la V4: https://youtu.be/pFBi8rngKKQ
